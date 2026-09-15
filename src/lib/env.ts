@@ -52,6 +52,8 @@ export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
   isProduction: process.env.NODE_ENV === "production",
 
+  databaseUrl: process.env.DATABASE_URL?.trim() ?? "",
+
   // Sesiones
   sessionSecret: sessionSecretValue(),
   sessionTtlDays: Number(process.env.SESSION_TTL_DAYS ?? 7),

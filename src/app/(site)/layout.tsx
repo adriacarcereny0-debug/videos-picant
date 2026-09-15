@@ -2,8 +2,14 @@ import { Header, type HeaderUser } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getCurrentUser } from "@/lib/auth";
 import { unreadCount } from "@/lib/notifications";
+import { checkSetup } from "@/lib/health";
+import { SetupNotice } from "@/components/SetupNotice";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  // Sin base de datos no hay nada que renderizar: se explica qué falta.
+  const setup = await checkSetup();
+  if (!setup.ready) return <SetupNotice missing={setup.missing} />;
+
   const user = await getCurrentUser();
   const unread = user ? await unreadCount(user.id) : 0;
 
