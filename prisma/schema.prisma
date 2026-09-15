@@ -1,0 +1,303 @@
+// Noctra — esquema de datos
+// PostgreSQL + Prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum Plan {
+  FREE
+  BASIC
+  PREMIUM
+}
+
+enum SubscriptionLevel {
+  BASIC
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  INCOMPLETE
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  UNPAID
+}
+
+enum VideoStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum NotificationType {
+  WELCOME
+  ACCOUNT_VERIFIED
+  SUBSCRIPTION_ACTIVATED
+  PAYMENT_SUCCEEDED
+  PAYMENT_FAILED
+  RENEWAL_REMINDER
+  SUBSCRIPTION_CANCELED
+  PLAN_CHANGED
+  NEW_VIDEO
+  NEW_PREMIUM_VIDEO
+}
+
+enum ReportReason {
+  INAPPROPRIATE
+  TECHNICAL
+  UNAUTHORIZED
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  RESOLVED
+}
+
+model User {
+  id              String        @id @default(cuid())
+  email           String        @unique
+  displayName     String?
+  passwordHash    String
+  role            Role          @default(USER)
+  accountStatus   AccountStatus @default(ACTIVE)
+  ageVerified     Boolean       @default(false)
+  emailVerified   Boolean       @default(false)
+  emailVerifiedAt DateTime?
+  lastLoginAt     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  subscription  Subscription?
+  sessions      Session[]
+  tokens        VerificationToken[]
+  notifications Notification[]
+  reports       Report[]
+  views         VideoView[]
+  loginAttempts LoginAttempt[]
+
+  @@index([createdAt])
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  userId     String
+  tokenHash  String   @unique
+  userAgent  String?
+  ip         String?
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  purpose   String // EMAIL_VERIFICATION | PASSWORD_RESET
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+}
+
+model LoginAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  ip        String?
+  success   Boolean
+  createdAt DateTime @default(now())
+  userId    String?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([email, createdAt])
+  @@index([ip, createdAt])
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  stripePriceId        String?
+  plan                 Plan               @default(FREE)
+  status               SubscriptionStatus @default(INCOMPLETE)
+  priceCents           Int                @default(0)
+  currency             String             @default("eur")
+  currentPeriodStart   DateTime?
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  canceledAt           DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user   User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events SubscriptionEvent[]
+
+  @@index([status])
+  @@index([plan])
+}
+
+model SubscriptionEvent {
+  id             String   @id @default(cuid())
+  subscriptionId String
+  type           String
+  amountCents    Int?
+  currency       String?
+  stripeEventId  String?  @unique
+  payload        Json?
+  createdAt      DateTime @default(now())
+
+  subscription Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId, createdAt])
+  @@index([type, createdAt])
+}
+
+model ProcessedWebhookEvent {
+  id            String   @id @default(cuid())
+  stripeEventId String   @unique
+  type          String
+  processedAt   DateTime @default(now())
+}
+
+model Video {
+  id                String            @id @default(cuid())
+  slug              String            @unique
+  title             String
+  description       String
+  category          String            @default("General")
+  thumbnailKey      String
+  videoStorageKey   String
+  previewKey        String?
+  durationSeconds   Int               @default(0)
+  subscriptionLevel SubscriptionLevel @default(BASIC)
+  status            VideoStatus       @default(DRAFT)
+  sortOrder         Int               @default(0)
+  viewCount         Int               @default(0)
+  publishedAt       DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  views    VideoView[]
+  reports  Report[]
+  renditions VideoRendition[]
+
+  @@index([status, publishedAt])
+  @@index([subscriptionLevel])
+  @@index([sortOrder])
+}
+
+model VideoRendition {
+  id          String @id @default(cuid())
+  videoId     String
+  label       String // 480p | 720p | 1080p
+  storageKey  String
+  widthPx     Int?
+  bitrateKbps Int?
+
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([videoId, label])
+}
+
+model VideoView {
+  id             String   @id @default(cuid())
+  userId         String?
+  videoId        String
+  watchedSeconds Int      @default(0)
+  createdAt      DateTime @default(now())
+
+  user  User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  video Video  @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@index([videoId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  type      NotificationType
+  title     String
+  message   String
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt])
+  @@index([userId, createdAt])
+}
+
+model Report {
+  id          String       @id @default(cuid())
+  userId      String?
+  videoId     String?
+  reason      ReportReason
+  description String       @default("")
+  contactEmail String?
+  status      ReportStatus @default(PENDING)
+  resolvedAt  DateTime?
+  adminNote   String?
+  createdAt   DateTime     @default(now())
+
+  user  User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  video Video? @relation(fields: [videoId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+}
+
+model SecurityLog {
+  id        String   @id @default(cuid())
+  event     String
+  userId    String?
+  email     String?
+  ip        String?
+  userAgent String?
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([event, createdAt])
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+}
