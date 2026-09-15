@@ -20,9 +20,35 @@ function sessionSecretValue(): string {
   return process.env.NODE_ENV === "production" ? "" : DEV_SESSION_SECRET;
 }
 
+/**
+ * URL pública de la aplicación.
+ *
+ * Se usa en correos, redirecciones de Stripe y metadatos, así que tiene que
+ * ser una URL absoluta válida siempre. Orden de preferencia:
+ *   1. APP_URL, si está definida y no viene vacía.
+ *   2. El dominio de producción del proyecto en Vercel.
+ *   3. El dominio de la propia implementación (previews).
+ *   4. localhost, en desarrollo.
+ *
+ * Una cadena vacía cuenta como "no definida": `??` no la descarta y bastaba
+ * para tumbar la compilación al construir `new URL()`.
+ */
+function resolveAppUrl(): string {
+  const explicit = process.env.APP_URL?.trim();
+  if (explicit) return explicit.replace(/\/$/, "");
+
+  const production = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (production) return `https://${production}`;
+
+  const deployment = process.env.VERCEL_URL?.trim();
+  if (deployment) return `https://${deployment}`;
+
+  return "http://localhost:3000";
+}
+
 export const env = {
-  appUrl: process.env.APP_URL ?? "http://localhost:3000",
-  appName: process.env.APP_NAME ?? "Noctra",
+  appUrl: resolveAppUrl(),
+  appName: process.env.APP_NAME?.trim() || "Noctra",
   nodeEnv: process.env.NODE_ENV ?? "development",
   isProduction: process.env.NODE_ENV === "production",
 

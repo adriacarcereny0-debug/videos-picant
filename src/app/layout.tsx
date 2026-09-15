@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Instrument_Serif } from "next/font/google";
 import "./globals.css";
+import { env } from "@/lib/env";
 
 /** Grotesk de interfaz: neutra, moderna, excelente en tamaños pequeños. */
 const geist = Geist({
@@ -18,7 +19,8 @@ const instrument = Instrument_Serif({
   style: ["normal", "italic"],
 });
 
-const appUrl = process.env.APP_URL ?? "http://localhost:3000";
+// Resuelta en un solo sitio: APP_URL, dominio de Vercel o localhost.
+const appUrl = env.appUrl;
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
