@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { guardAdmin } from "@/lib/admin";
 import { videoSchema } from "@/lib/validation";
@@ -12,6 +13,11 @@ export const maxDuration = 300;
 
 const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
 
+/** Miniatura ya subida directamente al almacenamiento, opcional en la edición. */
+const patchKeysSchema = z.object({
+  thumbnailKey: z.string().startsWith("thumbnails/").optional().nullable(),
+});
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -24,32 +30,48 @@ export async function PATCH(
     const existing = await prisma.video.findUnique({ where: { id } });
     if (!existing) return fail("Vídeo no encontrado.", 404);
 
-    const form = await request.formData();
+    const isJson = request.headers.get("content-type")?.includes("application/json");
+    const form = isJson ? null : await request.formData();
+    const payload = isJson ? await request.json() : null;
 
-    const parsed = videoSchema.parse({
-      title: form.get("title"),
-      description: form.get("description") ?? "",
-      category: form.get("category") || "General",
-      subscriptionLevel: form.get("subscriptionLevel"),
-      status: form.get("status"),
-      durationSeconds: form.get("durationSeconds") ?? 0,
-      publishedAt: form.get("publishedAt") ?? "",
-      sortOrder: form.get("sortOrder") ?? 0,
-    });
+    const parsed = videoSchema.parse(
+      isJson
+        ? payload
+        : {
+            title: form!.get("title"),
+            description: form!.get("description") ?? "",
+            category: form!.get("category") || "General",
+            subscriptionLevel: form!.get("subscriptionLevel"),
+            status: form!.get("status"),
+            durationSeconds: form!.get("durationSeconds") ?? 0,
+            publishedAt: form!.get("publishedAt") ?? "",
+            sortOrder: form!.get("sortOrder") ?? 0,
+            featured: form!.get("featured") === "true",
+          },
+    );
 
     let thumbnailKey = existing.thumbnailKey;
-    const thumbnailFile = form.get("thumbnail");
-    if (thumbnailFile instanceof File && thumbnailFile.size > 0) {
-      if (!IMAGE_TYPES.includes(thumbnailFile.type)) {
-        return fail("Formato de miniatura no admitido.", 415);
+
+    if (isJson) {
+      const { thumbnailKey: uploaded } = patchKeysSchema.parse(payload);
+      if (uploaded && uploaded !== existing.thumbnailKey) {
+        thumbnailKey = uploaded;
+        await deleteObject(existing.thumbnailKey);
       }
-      thumbnailKey = buildStorageKey("thumbnail", existing.id, thumbnailFile.name);
-      await putObject(
-        thumbnailKey,
-        Buffer.from(await thumbnailFile.arrayBuffer()),
-        thumbnailFile.type,
-      );
-      await deleteObject(existing.thumbnailKey);
+    } else {
+      const thumbnailFile = form!.get("thumbnail");
+      if (thumbnailFile instanceof File && thumbnailFile.size > 0) {
+        if (!IMAGE_TYPES.includes(thumbnailFile.type)) {
+          return fail("Formato de miniatura no admitido.", 415);
+        }
+        thumbnailKey = buildStorageKey("thumbnail", existing.id, thumbnailFile.name);
+        await putObject(
+          thumbnailKey,
+          Buffer.from(await thumbnailFile.arrayBuffer()),
+          thumbnailFile.type,
+        );
+        await deleteObject(existing.thumbnailKey);
+      }
     }
 
     const goesLive = existing.status !== "PUBLISHED" && parsed.status === "PUBLISHED";
@@ -69,6 +91,7 @@ export async function PATCH(
         status: parsed.status,
         durationSeconds: parsed.durationSeconds,
         sortOrder: parsed.sortOrder,
+        featured: parsed.featured ?? false,
         publishedAt,
         thumbnailKey,
       },

@@ -77,6 +77,7 @@ export const videoSchema = z.object({
   durationSeconds: z.coerce.number().int().min(0).max(86400).default(0),
   publishedAt: z.string().optional().or(z.literal("")),
   sortOrder: z.coerce.number().int().min(0).max(9999).default(0),
+  featured: z.coerce.boolean().default(false),
 });
 
 /** Primer mensaje de error legible de un ZodError. */

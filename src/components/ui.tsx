@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
+import { IconArrowUpRight } from "@/components/icons";
 
 /* ------------------------------ Botones ------------------------------ */
 
@@ -8,48 +9,103 @@ type Size = "sm" | "md" | "lg";
 
 const VARIANTS: Record<Variant, string> = {
   primary:
-    "bg-aurum text-obsidian hover:bg-aurum-soft shadow-[0_10px_30px_-14px_rgba(200,160,99,.85)]",
-  secondary: "bg-elevated text-ink border border-line hover:border-aurum/45 hover:bg-[#1c1c23]",
-  outline: "border border-line text-ink hover:border-aurum/55 hover:text-aurum-soft",
-  ghost: "text-ink-muted hover:text-ink hover:bg-white/5",
-  danger: "bg-danger/12 text-danger border border-danger/30 hover:bg-danger/20",
+    "bg-aurum text-obsidian hover:bg-aurum-soft shadow-[0_18px_44px_-22px_rgba(200,160,99,.9)]",
+  secondary:
+    "bg-white/[0.045] text-ink border border-white/10 hover:bg-white/[0.08] hover:border-white/20",
+  outline: "border border-white/12 text-ink hover:border-aurum/45 hover:text-aurum-soft",
+  ghost: "text-ink-muted hover:text-ink hover:bg-white/[0.05]",
+  danger: "bg-danger/10 text-danger border border-danger/25 hover:bg-danger/18",
 };
 
 const SIZES: Record<Size, string> = {
-  sm: "h-9 px-3.5 text-[13px]",
-  md: "h-11 px-5 text-sm",
-  lg: "h-13 px-7 text-[15px]",
+  sm: "h-9 pl-4 pr-4 text-[12.5px]",
+  md: "h-11 pl-5 pr-5 text-[13.5px]",
+  lg: "h-[52px] pl-7 pr-7 text-[15px]",
 };
 
-function buttonClass(variant: Variant, size: Size, full?: boolean) {
+/** Con icono anidado el padding derecho se reduce para que quede a ras. */
+const SIZES_WITH_ICON: Record<Size, string> = {
+  sm: "h-9 pl-4 pr-1 text-[12.5px]",
+  md: "h-11 pl-5 pr-1.5 text-[13.5px]",
+  lg: "h-[52px] pl-7 pr-2 text-[15px]",
+};
+
+const ICON_WELL: Record<Size, string> = {
+  sm: "h-7 w-7",
+  md: "h-8 w-8",
+  lg: "h-9 w-9",
+};
+
+function buttonClass(variant: Variant, size: Size, full?: boolean, withIcon?: boolean) {
   return [
-    "inline-flex items-center justify-center gap-2 rounded-full font-semibold",
-    "transition-all duration-300 ease-[cubic-bezier(.22,.61,.36,1)] focus-ring",
-    "disabled:opacity-45 disabled:pointer-events-none whitespace-nowrap",
+    "group/btn relative inline-flex items-center justify-center gap-3 rounded-full font-medium tracking-[-0.01em]",
+    "transition-all duration-500 ease-[cubic-bezier(.32,.72,0,1)] active:scale-[0.985] focus-ring",
+    "disabled:opacity-40 disabled:pointer-events-none whitespace-nowrap",
     VARIANTS[variant],
-    SIZES[size],
+    withIcon ? SIZES_WITH_ICON[size] : SIZES[size],
     full ? "w-full" : "",
   ].join(" ");
+}
+
+/**
+ * Pozo circular que aloja la flecha. Nunca va suelta junto al texto:
+ * se desplaza en diagonal al pasar el cursor, creando tensión interna.
+ */
+function IconWell({ size, variant }: { size: Size; variant: Variant }) {
+  const tone =
+    variant === "primary" ? "bg-obsidian/12 text-obsidian" : "bg-white/[0.08] text-ink";
+  return (
+    <span
+      aria-hidden
+      className={`ml-auto grid shrink-0 place-items-center rounded-full transition-transform duration-500 ease-[cubic-bezier(.32,.72,0,1)] group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-[1px] group-hover/btn:scale-105 ${ICON_WELL[size]} ${tone}`}
+    >
+      <IconArrowUpRight width={size === "sm" ? 12 : 14} height={size === "sm" ? 12 : 14} />
+    </span>
+  );
 }
 
 export function Button({
   variant = "primary",
   size = "md",
   full,
+  icon,
   className = "",
+  children,
   ...props
-}: ComponentProps<"button"> & { variant?: Variant; size?: Size; full?: boolean }) {
-  return <button className={`${buttonClass(variant, size, full)} ${className}`} {...props} />;
+}: ComponentProps<"button"> & {
+  variant?: Variant;
+  size?: Size;
+  full?: boolean;
+  icon?: boolean;
+}) {
+  return (
+    <button className={`${buttonClass(variant, size, full, icon)} ${className}`} {...props}>
+      {children}
+      {icon && <IconWell size={size} variant={variant} />}
+    </button>
+  );
 }
 
 export function ButtonLink({
   variant = "primary",
   size = "md",
   full,
+  icon,
   className = "",
+  children,
   ...props
-}: ComponentProps<typeof Link> & { variant?: Variant; size?: Size; full?: boolean }) {
-  return <Link className={`${buttonClass(variant, size, full)} ${className}`} {...props} />;
+}: ComponentProps<typeof Link> & {
+  variant?: Variant;
+  size?: Size;
+  full?: boolean;
+  icon?: boolean;
+}) {
+  return (
+    <Link className={`${buttonClass(variant, size, full, icon)} ${className}`} {...props}>
+      {children}
+      {icon && <IconWell size={size} variant={variant} />}
+    </Link>
+  );
 }
 
 /* ------------------------------ Etiquetas ---------------------------- */
@@ -64,14 +120,14 @@ export function LevelBadge({
   const premium = level === "PREMIUM";
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.16em] backdrop-blur-md ${
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[9.5px] font-medium uppercase tracking-[0.18em] backdrop-blur-md ${
         premium
-          ? "border-aurum/45 bg-aurum/12 text-aurum-soft"
-          : "border-silver/30 bg-silver/10 text-silver"
+          ? "border-aurum/40 bg-aurum/10 text-aurum-soft"
+          : "border-silver/25 bg-silver/[0.07] text-silver"
       } ${className}`}
     >
       <span
-        className={`h-1.5 w-1.5 rounded-full ${premium ? "bg-aurum" : "bg-silver"}`}
+        className={`h-1 w-1 rounded-full ${premium ? "bg-aurum" : "bg-silver"}`}
         aria-hidden
       />
       {premium ? "Premium" : "Básico"}
@@ -80,10 +136,10 @@ export function LevelBadge({
 }
 
 const STATUS_TONES: Record<string, string> = {
-  positive: "border-positive/35 bg-positive/12 text-positive",
-  warning: "border-warning/35 bg-warning/12 text-warning",
-  danger: "border-danger/35 bg-danger/12 text-danger",
-  neutral: "border-line bg-white/5 text-ink-muted",
+  positive: "border-positive/30 bg-positive/10 text-positive",
+  warning: "border-warning/30 bg-warning/10 text-warning",
+  danger: "border-danger/30 bg-danger/10 text-danger",
+  neutral: "border-white/10 bg-white/[0.04] text-ink-muted",
 };
 
 export function StatusPill({
@@ -95,8 +151,18 @@ export function StatusPill({
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-semibold ${STATUS_TONES[tone]}`}
+      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium ${STATUS_TONES[tone]}`}
     >
+      {children}
+    </span>
+  );
+}
+
+/** Píldora microscópica que precede a los titulares. */
+export function Eyebrow({ children }: { children: ReactNode }) {
+  return (
+    <span className="eyebrow inline-flex items-center gap-2 rounded-full border border-white/[0.07] bg-white/[0.025] px-3 py-1.5">
+      <span className="h-1 w-1 rounded-full bg-aurum" aria-hidden />
       {children}
     </span>
   );
@@ -111,17 +177,21 @@ export function SectionHeading({
   action,
 }: {
   eyebrow?: string;
-  title: string;
+  title: ReactNode;
   description?: string;
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+    <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-2xl">
-        {eyebrow && <p className="eyebrow mb-3">{eyebrow}</p>}
+        {eyebrow && (
+          <div className="mb-5">
+            <Eyebrow>{eyebrow}</Eyebrow>
+          </div>
+        )}
         <h2 className="display-lg text-ink">{title}</h2>
         {description && (
-          <p className="mt-3 text-[15px] leading-relaxed text-ink-muted">{description}</p>
+          <p className="mt-5 max-w-xl text-[15px] leading-[1.7] text-ink-muted">{description}</p>
         )}
       </div>
       {action}
@@ -129,16 +199,26 @@ export function SectionHeading({
   );
 }
 
+/**
+ * Tarjeta con carcasa exterior y núcleo interior: radios concéntricos y
+ * reflejo interno, en lugar de un rectángulo plano con borde gris.
+ */
 export function Card({
   children,
   className = "",
+  compact,
   as: Tag = "div",
 }: {
   children: ReactNode;
   className?: string;
+  compact?: boolean;
   as?: "div" | "section" | "article";
 }) {
-  return <Tag className={`surface p-6 sm:p-7 ${className}`}>{children}</Tag>;
+  return (
+    <Tag className={`shell ${compact ? "shell-sm" : ""} ${className}`}>
+      <div className="shell-core p-6 sm:p-8">{children}</div>
+    </Tag>
+  );
 }
 
 export function EmptyState({
@@ -153,12 +233,16 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="surface flex flex-col items-center gap-3 px-6 py-16 text-center">
-      {icon && <div className="text-ink-faint">{icon}</div>}
-      <h3 className="font-display text-lg font-bold text-ink">{title}</h3>
-      {description && <p className="max-w-sm text-sm text-ink-muted">{description}</p>}
-      {action && <div className="mt-3">{action}</div>}
-    </div>
+    <Card>
+      <div className="flex flex-col items-center gap-4 px-6 py-16 text-center">
+        {icon && <div className="text-ink-faint">{icon}</div>}
+        <h3 className="font-display text-2xl text-ink">{title}</h3>
+        {description && (
+          <p className="max-w-sm text-[14px] leading-relaxed text-ink-muted">{description}</p>
+        )}
+        {action && <div className="mt-2">{action}</div>}
+      </div>
+    </Card>
   );
 }
 
@@ -179,20 +263,21 @@ export function Field({
     <div className="space-y-2">
       <label
         htmlFor={htmlFor}
-        className="block text-[13px] font-semibold tracking-wide text-ink-muted"
+        className="block text-[11px] font-medium uppercase tracking-[0.14em] text-ink-faint"
       >
         {label}
       </label>
       {children}
-      {hint && !error && <p className="text-xs text-ink-faint">{hint}</p>}
-      {error && <p className="text-xs text-danger">{error}</p>}
+      {hint && !error && <p className="text-[12px] leading-relaxed text-ink-faint">{hint}</p>}
+      {error && <p className="text-[12px] text-danger">{error}</p>}
     </div>
   );
 }
 
 export const inputClass =
-  "w-full rounded-xl border border-line bg-[#0d0d11] px-4 py-3 text-[15px] text-ink placeholder:text-ink-faint " +
-  "transition-colors duration-200 focus:border-aurum/60 focus:outline-none focus:ring-2 focus:ring-aurum/20";
+  "w-full rounded-2xl border border-white/[0.07] bg-black/40 px-4 py-3.5 text-[15px] text-ink placeholder:text-ink-faint " +
+  "shadow-[inset_0_1px_1px_rgba(255,255,255,0.04)] transition-all duration-400 ease-[cubic-bezier(.32,.72,0,1)] " +
+  "focus:border-aurum/45 focus:outline-none focus:ring-[3px] focus:ring-aurum/12";
 
 export function Alert({
   tone = "neutral",
@@ -202,13 +287,13 @@ export function Alert({
   children: ReactNode;
 }) {
   const tones = {
-    neutral: "border-line bg-white/[0.04] text-ink-muted",
-    positive: "border-positive/30 bg-positive/10 text-positive",
-    warning: "border-warning/30 bg-warning/10 text-warning",
-    danger: "border-danger/30 bg-danger/10 text-danger",
+    neutral: "border-white/[0.07] bg-white/[0.03] text-ink-muted",
+    positive: "border-positive/25 bg-positive/[0.08] text-positive",
+    warning: "border-warning/25 bg-warning/[0.08] text-warning",
+    danger: "border-danger/25 bg-danger/[0.08] text-danger",
   };
   return (
-    <div className={`rounded-xl border px-4 py-3 text-sm leading-relaxed ${tones[tone]}`}>
+    <div className={`rounded-2xl border px-4 py-3.5 text-[13.5px] leading-relaxed ${tones[tone]}`}>
       {children}
     </div>
   );

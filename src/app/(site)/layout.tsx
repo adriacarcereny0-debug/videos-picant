@@ -18,8 +18,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="flex min-h-dvh flex-col">
+      <div className="grain-overlay" aria-hidden />
       <Header user={headerUser} unread={unread} />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pt-[var(--header-h)]">{children}</main>
       <Footer />
     </div>
   );

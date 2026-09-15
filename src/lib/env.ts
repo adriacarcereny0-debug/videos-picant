@@ -4,15 +4,20 @@
  * las claves privadas viven exclusivamente en el servidor.
  */
 
-function required(name: string, fallback?: string): string {
-  const value = process.env[name] ?? fallback;
-  if (value === undefined || value === "") {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(`Falta la variable de entorno obligatoria: ${name}`);
-    }
-    return "";
-  }
-  return value;
+const DEV_SESSION_SECRET = "dev-only-insecure-secret-change-me-32chars";
+
+/**
+ * Secreto de sesión.
+ *
+ * No se lanza el error al importar el módulo: eso rompería la compilación en
+ * un despliegue todavía sin configurar. El error salta cuando realmente se
+ * va a firmar o verificar algo (ver `requireSessionSecret`), de modo que
+ * producción nunca llega a usar el secreto de desarrollo.
+ */
+function sessionSecretValue(): string {
+  const value = process.env.SESSION_SECRET;
+  if (value && value.length > 0) return value;
+  return process.env.NODE_ENV === "production" ? "" : DEV_SESSION_SECRET;
 }
 
 export const env = {
@@ -22,7 +27,7 @@ export const env = {
   isProduction: process.env.NODE_ENV === "production",
 
   // Sesiones
-  sessionSecret: required("SESSION_SECRET", "dev-only-insecure-secret-change-me-32chars"),
+  sessionSecret: sessionSecretValue(),
   sessionTtlDays: Number(process.env.SESSION_TTL_DAYS ?? 7),
   sessionRememberTtlDays: Number(process.env.SESSION_REMEMBER_TTL_DAYS ?? 30),
 
@@ -33,7 +38,9 @@ export const env = {
   stripePricePremium: process.env.STRIPE_PRICE_PREMIUM ?? "",
 
   // Almacenamiento de objetos privado
-  storageDriver: (process.env.STORAGE_DRIVER ?? "local") as "s3" | "local",
+  storageDriver: (process.env.STORAGE_DRIVER ??
+    (process.env.BLOB_READ_WRITE_TOKEN ? "blob" : "local")) as "s3" | "blob" | "local",
+  blobToken: process.env.BLOB_READ_WRITE_TOKEN ?? "",
   s3Bucket: process.env.S3_BUCKET ?? "",
   s3Region: process.env.S3_REGION ?? "auto",
   s3Endpoint: process.env.S3_ENDPOINT ?? "",
@@ -51,6 +58,22 @@ export const env = {
   // Demo
   demoMode: process.env.DEMO_MODE !== "false",
 };
+
+/**
+ * Devuelve el secreto de sesión o falla de forma explícita.
+ * Se llama desde los puntos donde se firma/verifica, nunca al importar.
+ */
+export function requireSessionSecret(): string {
+  if (!env.sessionSecret) {
+    throw new Error(
+      "Falta SESSION_SECRET. Defínela en las variables de entorno antes de usar sesiones o enlaces firmados.",
+    );
+  }
+  return env.sessionSecret;
+}
+
+/** Comprobación no destructiva para pantallas de diagnóstico. */
+export const isSessionSecretConfigured = () => Boolean(env.sessionSecret);
 
 export const isStripeConfigured = () =>
   Boolean(env.stripeSecretKey && env.stripePriceBasic && env.stripePricePremium);

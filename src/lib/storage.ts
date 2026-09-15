@@ -2,21 +2,25 @@ import "server-only";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { SignJWT, jwtVerify } from "jose";
-import { env } from "@/lib/env";
+import { env, requireSessionSecret } from "@/lib/env";
 
 /**
  * Almacenamiento de objetos PRIVADO.
  *
- * - `s3`  : bucket privado (S3, R2, B2…). Se entregan URLs prefirmadas con
- *           caducidad corta. El bucket nunca debe ser público.
- * - `local`: solo para la demo. Los ficheros viven fuera de /public y se sirven
- *           a través de /api/stream/[token] con un token firmado y caducado.
+ * Tres drivers intercambiables, todos con el mismo contrato: el objeto nunca
+ * es público y el acceso se entrega como URL firmada de caducidad corta.
  *
- * En ambos casos la URL real del objeto nunca se expone al cliente.
+ * - `blob`  : Vercel Blob con `access: "private"` + URL prefirmada (producción
+ *             en Vercel). El navegador descarga directamente del CDN.
+ * - `s3`    : bucket privado S3/R2/B2 con URL prefirmada.
+ * - `local` : solo desarrollo. Ficheros fuera de /public, servidos por
+ *             /api/stream/[token] con un JWT firmado y caducado.
+ *
+ * En los tres casos la ruta real del objeto nunca se expone al cliente.
  */
 
 const LOCAL_ROOT = path.join(process.cwd(), "storage");
-const secret = new TextEncoder().encode(env.sessionSecret || "dev-secret-fallback");
+const encodedSecret = () => new TextEncoder().encode(requireSessionSecret());
 
 export type StorageKind = "video" | "thumbnail" | "preview";
 
@@ -25,7 +29,30 @@ export interface SignedAsset {
   expiresAt: Date;
 }
 
-/* ------------------------------ S3 ------------------------------ */
+/* ------------------------------ Vercel Blob ------------------------------ */
+
+async function presignBlob(key: string, ttlSeconds: number): Promise<string> {
+  const { issueSignedToken, presignUrl } = await import("@vercel/blob");
+  const validUntil = Date.now() + ttlSeconds * 1000;
+
+  const token = await issueSignedToken({
+    pathname: key,
+    operations: ["get"],
+    validUntil,
+    ...(env.blobToken ? { token: env.blobToken } : {}),
+  });
+
+  const { presignedUrl } = await presignUrl(token, {
+    operation: "get",
+    pathname: key,
+    validUntil,
+    access: "private",
+  });
+
+  return presignedUrl;
+}
+
+/* ---------------------------------- S3 ---------------------------------- */
 
 async function s3Client() {
   const { S3Client } = await import("@aws-sdk/client-s3");
@@ -49,7 +76,7 @@ async function presignS3(key: string, ttlSeconds: number): Promise<string> {
   });
 }
 
-/* ------------------------- Tokens locales ------------------------ */
+/* --------------------------- Tokens del driver local --------------------- */
 
 export async function signLocalAccessToken(
   key: string,
@@ -61,14 +88,14 @@ export async function signLocalAccessToken(
     .setSubject(subject)
     .setIssuedAt()
     .setExpirationTime(`${ttlSeconds}s`)
-    .sign(secret);
+    .sign(encodedSecret());
 }
 
 export async function verifyLocalAccessToken(
   token: string,
 ): Promise<{ key: string; sub: string } | null> {
   try {
-    const { payload } = await jwtVerify(token, secret);
+    const { payload } = await jwtVerify(token, encodedSecret());
     if (typeof payload.key !== "string") return null;
     return { key: payload.key, sub: String(payload.sub ?? "anonymous") };
   } catch {
@@ -76,7 +103,14 @@ export async function verifyLocalAccessToken(
   }
 }
 
-/* --------------------------- API pública -------------------------- */
+/* ------------------------------ API pública ------------------------------ */
+
+/** Driver efectivo, resuelto a partir de la configuración disponible. */
+export function activeDriver(): "blob" | "s3" | "local" {
+  if (env.storageDriver === "blob") return "blob";
+  if (env.storageDriver === "s3" && env.s3Bucket) return "s3";
+  return "local";
+}
 
 /**
  * Genera un acceso temporal a un objeto privado.
@@ -89,44 +123,74 @@ export async function createSignedAsset(
   const ttl = options.ttlSeconds ?? env.signedUrlTtlSeconds;
   const expiresAt = new Date(Date.now() + ttl * 1000);
 
-  if (env.storageDriver === "s3" && env.s3Bucket) {
-    return { url: await presignS3(key, ttl), expiresAt };
-  }
+  if (!key) return { url: "", expiresAt };
 
-  const token = await signLocalAccessToken(key, ttl, options.subject ?? "anonymous");
-  return { url: `/api/stream/${token}`, expiresAt };
+  switch (activeDriver()) {
+    case "blob":
+      return { url: await presignBlob(key, ttl), expiresAt };
+    case "s3":
+      return { url: await presignS3(key, ttl), expiresAt };
+    default: {
+      const token = await signLocalAccessToken(key, ttl, options.subject ?? "anonymous");
+      return { url: `/api/stream/${token}`, expiresAt };
+    }
+  }
 }
 
 export async function putObject(key: string, body: Buffer, contentType: string): Promise<void> {
-  if (env.storageDriver === "s3" && env.s3Bucket) {
-    const { PutObjectCommand } = await import("@aws-sdk/client-s3");
-    const client = await s3Client();
-    await client.send(
-      new PutObjectCommand({
-        Bucket: env.s3Bucket,
-        Key: key,
-        Body: body,
-        ContentType: contentType,
-        // El objeto nunca es público: sin ACL public-read.
-      }),
-    );
-    return;
+  switch (activeDriver()) {
+    case "blob": {
+      const { put } = await import("@vercel/blob");
+      await put(key, body, {
+        access: "private",
+        contentType,
+        addRandomSuffix: false,
+        ...(env.blobToken ? { token: env.blobToken } : {}),
+      });
+      return;
+    }
+    case "s3": {
+      const { PutObjectCommand } = await import("@aws-sdk/client-s3");
+      const client = await s3Client();
+      await client.send(
+        new PutObjectCommand({
+          Bucket: env.s3Bucket,
+          Key: key,
+          Body: body,
+          ContentType: contentType,
+          // El objeto nunca es público: sin ACL public-read.
+        }),
+      );
+      return;
+    }
+    default: {
+      const target = path.join(LOCAL_ROOT, key);
+      await fs.mkdir(path.dirname(target), { recursive: true });
+      await fs.writeFile(target, body);
+    }
   }
-
-  const target = path.join(LOCAL_ROOT, key);
-  await fs.mkdir(path.dirname(target), { recursive: true });
-  await fs.writeFile(target, body);
 }
 
 export async function deleteObject(key: string): Promise<void> {
   if (!key) return;
-  if (env.storageDriver === "s3" && env.s3Bucket) {
-    const { DeleteObjectCommand } = await import("@aws-sdk/client-s3");
-    const client = await s3Client();
-    await client.send(new DeleteObjectCommand({ Bucket: env.s3Bucket, Key: key })).catch(() => undefined);
-    return;
+
+  switch (activeDriver()) {
+    case "blob": {
+      const { del } = await import("@vercel/blob");
+      await del(key, env.blobToken ? { token: env.blobToken } : undefined).catch(() => undefined);
+      return;
+    }
+    case "s3": {
+      const { DeleteObjectCommand } = await import("@aws-sdk/client-s3");
+      const client = await s3Client();
+      await client
+        .send(new DeleteObjectCommand({ Bucket: env.s3Bucket, Key: key }))
+        .catch(() => undefined);
+      return;
+    }
+    default:
+      await fs.rm(path.join(LOCAL_ROOT, key), { force: true }).catch(() => undefined);
   }
-  await fs.rm(path.join(LOCAL_ROOT, key), { force: true }).catch(() => undefined);
 }
 
 /** Lectura local con soporte de rangos para el reproductor. */

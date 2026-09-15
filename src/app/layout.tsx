@@ -1,18 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Geist, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+/** Grotesk de interfaz: neutra, moderna, excelente en tamaños pequeños. */
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-geist",
   display: "swap",
 });
 
-const manrope = Manrope({
+/** Serif editorial de alto contraste para los titulares. */
+const instrument = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-manrope",
+  variable: "--font-instrument",
   display: "swap",
-  weight: ["500", "700", "800"],
+  weight: ["400"],
+  style: ["normal", "italic"],
 });
 
 const appUrl = process.env.APP_URL ?? "http://localhost:3000";
@@ -53,7 +56,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${inter.variable} ${manrope.variable}`} suppressHydrationWarning>
+    <html lang="es" className={`${geist.variable} ${instrument.variable}`} suppressHydrationWarning>
       <body className="min-h-dvh antialiased">{children}</body>
     </html>
   );

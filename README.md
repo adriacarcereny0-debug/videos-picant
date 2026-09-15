@@ -17,6 +17,7 @@ chats, propinas, monedas virtuales, marketplace ni gamificación.
 | Suscripciones | Dos planes mensuales: **Básico 9,99 €** y **Premium 19,99 €** |
 | Pagos | Stripe Checkout + Billing + Customer Portal + webhooks firmados |
 | Contenido | Catálogo con niveles `BASIC` / `PREMIUM`, tarjetas bloqueadas y reproductor propio |
+| Portada | El hero usa la imagen del vídeo que marques como destacado en `/admin/videos`; con varios, rota |
 | Protección | Almacenamiento privado, URLs firmadas de caducidad corta, autorización siempre en servidor |
 | Cuenta | Dashboard, gestión de suscripción, notificaciones, perfil |
 | Administración | Panel completo en `/admin`: métricas, vídeos, usuarios, suscripciones, reportes y ajustes |
@@ -43,7 +44,7 @@ Navegador ──► Next.js (App Router, RSC)
 - **Frontend**: `src/app/**` (páginas), `src/components/**` (UI). Nunca decide permisos.
 - **Backend**: `src/app/api/**` (endpoints) y `src/lib/**` (dominio: auth, storage, stripe, vídeos).
 - **Base de datos**: `prisma/schema.prisma`, acceso exclusivo desde el servidor.
-- **Almacenamiento**: `src/lib/storage.ts`, con dos drivers intercambiables (`s3` y `local`).
+- **Almacenamiento**: `src/lib/storage.ts`, con tres drivers intercambiables (`blob`, `s3` y `local`).
 - **Pagos**: `src/lib/stripe.ts` + `src/app/api/stripe/webhook`.
 
 ### Stack
@@ -90,9 +91,11 @@ vídeo que pueda usar.
 ## 5. Protección de los vídeos
 
 1. Los ficheros **nunca** se guardan en `public/`. En desarrollo van a `storage/` (fuera del
-   árbol servido); en producción, a un **bucket privado** sin acceso anónimo.
+   árbol servido); en producción, a **Vercel Blob privado** (`access: "private"`) o a un
+   **bucket privado** S3/R2 sin acceso anónimo.
 2. Antes de generar cualquier acceso se comprueban los permisos en el servidor.
 3. El acceso se entrega como **URL firmada con caducidad corta** (por defecto 15 min):
+   - driver `blob`: URL prefirmada de Vercel Blob (`issueSignedToken` + `presignUrl`);
    - driver `s3`: URL prefirmada del proveedor;
    - driver `local`: `/api/stream/<jwt>` con token HS256 firmado, verificado en cada petición.
 4. La ruta real del objeto no se expone jamás al cliente.
@@ -264,4 +267,52 @@ npm run typecheck    # TypeScript sin emitir
 npm run db:push      # sincroniza el esquema
 npm run db:migrate   # migraciones versionadas
 npm run db:seed      # datos de demostración
+```
+
+---
+
+## 13. Despliegue en Vercel
+
+### Por qué la subida de vídeo va directa al almacenamiento
+
+Las funciones de Vercel limitan el cuerpo de la petición a **4,5 MB**, así que un vídeo no
+puede viajar a través de la API. El panel pide un token acotado a `/api/admin/upload-token`
+(solo administradores, ruta, tipo y tamaño concretos) y el navegador sube el fichero
+**directamente** al almacenamiento privado. Después se guarda la ficha con la clave del objeto.
+
+En desarrollo con el driver `local` el fichero sí viaja en la petición, que es más cómodo.
+El panel elige la vía automáticamente según el driver activo.
+
+### Pasos
+
+1. **Base de datos**: crea un Postgres (Neon, Vercel Postgres, Supabase…) y copia su URL.
+2. **Almacenamiento**: en Vercel → *Storage* → *Blob*, crea un store y conéctalo al proyecto.
+   Vercel inyecta `BLOB_READ_WRITE_TOKEN` por su cuenta.
+3. **Variables de entorno** del proyecto (*Settings* → *Environment Variables*):
+
+   | Variable | Valor |
+   | --- | --- |
+   | `DATABASE_URL` | URL de tu Postgres |
+   | `SESSION_SECRET` | 32+ caracteres aleatorios (`openssl rand -base64 48`) |
+   | `APP_URL` | `https://tu-dominio.vercel.app` |
+   | `STORAGE_DRIVER` | `blob` |
+   | `DEMO_MODE` | `false` cuando conectes Stripe de verdad |
+   | `STRIPE_*` | claves y precios, cuando los tengas |
+   | `SMTP_*`, `MAIL_FROM` | correo transaccional, cuando lo tengas |
+
+4. **Rama de producción**: en *Settings* → *Git*, comprueba que apunta a la rama que has
+   desplegado.
+5. Vuelve a desplegar. El build ejecuta `prisma migrate deploy`, así que el esquema se aplica
+   solo en la primera publicación.
+
+> El build no falla si falta `DATABASE_URL`: se salta las migraciones y avisa por consola.
+> La aplicación necesita esa variable para funcionar, pero así un despliegue a medio
+> configurar publica igualmente en lugar de romperse.
+
+### Datos de demostración en producción
+
+El *seed* no se ejecuta automáticamente. Para cargarlo contra la base de datos de producción:
+
+```bash
+DATABASE_URL="postgresql://…" npm run db:seed
 ```

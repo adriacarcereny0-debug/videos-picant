@@ -71,6 +71,26 @@ export async function listPublishedVideos(options: {
   return Promise.all(videos.map((v) => toPublicVideo(v, options.plan)));
 }
 
+/** Portadas del hero: vídeos marcados como destacados en el panel. */
+export async function listFeaturedCovers(limit = 5) {
+  const videos = await prisma.video.findMany({
+    where: { featured: true, status: "PUBLISHED", publishedAt: { lte: new Date() } },
+    orderBy: [{ sortOrder: "asc" }, { publishedAt: "desc" }],
+    take: limit,
+  });
+
+  return Promise.all(
+    videos.map(async (video) => ({
+      id: video.id,
+      title: video.title,
+      category: video.category,
+      subscriptionLevel: video.subscriptionLevel,
+      // Solo la miniatura firmada: la portada nunca expone el vídeo.
+      thumbnailUrl: (await createSignedAsset(video.thumbnailKey, { ttlSeconds: 3600 })).url,
+    })),
+  );
+}
+
 export interface PlaybackGrant {
   allowed: boolean;
   reason?: "NOT_FOUND" | "NOT_PUBLISHED" | "AUTH_REQUIRED" | "PLAN_REQUIRED";

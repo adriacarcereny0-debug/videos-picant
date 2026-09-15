@@ -1,6 +1,6 @@
 import { VideoManager, type AdminVideo } from "@/components/admin/VideoManager";
 import { prisma } from "@/lib/prisma";
-import { createSignedAsset } from "@/lib/storage";
+import { activeDriver, createSignedAsset } from "@/lib/storage";
 
 export const metadata = { title: "Vídeos" };
 export const dynamic = "force-dynamic";
@@ -30,6 +30,7 @@ export default async function AdminVideosPage({
       subscriptionLevel: video.subscriptionLevel,
       status: video.status,
       sortOrder: video.sortOrder,
+      featured: video.featured,
       viewCount: video.viewCount,
       publishedAt: video.publishedAt?.toISOString() ?? null,
       createdAt: video.createdAt.toISOString(),
@@ -47,7 +48,11 @@ export default async function AdminVideosPage({
         </p>
       </header>
 
-      <VideoManager videos={rows} openUpload={params.upload === "1"} />
+      <VideoManager
+        videos={rows}
+        openUpload={params.upload === "1"}
+        uploadMode={activeDriver() === "blob" ? "direct" : "inline"}
+      />
     </div>
   );
 }

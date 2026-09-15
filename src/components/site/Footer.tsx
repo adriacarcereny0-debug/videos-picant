@@ -34,8 +34,8 @@ const COLUMNS = [
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-line-soft bg-[#0a0a0c]">
-      <div className="mx-auto max-w-[1280px] px-4 py-16 sm:px-6 lg:px-8">
+    <footer className="mt-32 border-t border-white/[0.05] bg-[#07070a]">
+      <div className="mx-auto max-w-[1180px] px-4 py-24 sm:px-6 lg:px-8">
         <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
           <div className="max-w-xs">
             <Logo />
@@ -51,7 +51,7 @@ export function Footer() {
 
           {COLUMNS.map((column) => (
             <div key={column.title}>
-              <h3 className="mb-4 text-[11px] font-bold uppercase tracking-[0.2em] text-ink-faint">
+              <h3 className="eyebrow mb-5">
                 {column.title}
               </h3>
               <ul className="space-y-2.5">
@@ -70,7 +70,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="hairline my-12" />
+        <div className="hairline my-14" />
 
         <div className="flex flex-col gap-4 text-xs text-ink-faint sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Noctra. Todos los derechos reservados.</p>

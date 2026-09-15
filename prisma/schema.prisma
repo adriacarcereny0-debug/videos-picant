@@ -199,6 +199,8 @@ model Video {
   subscriptionLevel SubscriptionLevel @default(BASIC)
   status            VideoStatus       @default(DRAFT)
   sortOrder         Int               @default(0)
+  /// Marca el vídeo como portada del hero de la landing.
+  featured          Boolean           @default(false)
   viewCount         Int               @default(0)
   publishedAt       DateTime?
   createdAt         DateTime          @default(now())
@@ -211,6 +213,7 @@ model Video {
   @@index([status, publishedAt])
   @@index([subscriptionLevel])
   @@index([sortOrder])
+  @@index([featured, status])
 }
 
 model VideoRendition {

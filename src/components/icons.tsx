@@ -207,3 +207,18 @@ export const IconEdit = (p: SVGProps<SVGSVGElement>) => (
     <path d="M4.5 19.5h3.2L19 8.2a2.1 2.1 0 0 0-3-3L4.5 16.3Z" />
   </svg>
 );
+
+export const IconStar = (p: SVGProps<SVGSVGElement> & { filled?: boolean }) => {
+  const { filled, ...rest } = p;
+  return (
+    <svg {...base(rest)} fill={filled ? "currentColor" : "none"}>
+      <path d="M12 3.6l2.6 5.28 5.83.85-4.22 4.11 1 5.81L12 16.91l-5.21 2.74 1-5.81-4.22-4.11 5.83-.85Z" />
+    </svg>
+  );
+};
+
+export const IconArrowUpRight = (p: SVGProps<SVGSVGElement>) => (
+  <svg {...base({ strokeWidth: 1.8, ...p })}>
+    <path d="M7 17 17 7m0 0H8.5M17 7v8.5" />
+  </svg>
+);

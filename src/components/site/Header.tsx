@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
 import { ButtonLink } from "@/components/ui";
-import { IconBell, IconClose, IconMenu, IconUser } from "@/components/icons";
+import { IconBell, IconUser } from "@/components/icons";
 
 export interface HeaderUser {
   displayName: string | null;
@@ -21,13 +21,17 @@ const NAV = [
   { href: "/faq", label: "FAQ" },
 ];
 
+/**
+ * Isla flotante: la navegación no se pega al borde superior, flota como una
+ * pastilla de cristal separada del contenido.
+ */
 export function Header({ user, unread }: { user: HeaderUser | null; unread: number }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -43,17 +47,18 @@ export function Header({ user, unread }: { user: HeaderUser | null; unread: numb
   }, [open]);
 
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "border-b border-line-soft bg-obsidian/88 backdrop-blur-xl"
-          : "border-b border-transparent"
-      }`}
-    >
-      <div className="mx-auto flex h-[var(--header-h)] max-w-[1280px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-10">
+    <>
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-5 sm:pt-6">
+        <div
+          className={`pointer-events-auto flex w-full max-w-[1180px] items-center justify-between gap-6 rounded-full border px-3 py-2.5 pl-5 transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)] sm:px-4 sm:pl-6 ${
+            scrolled
+              ? "border-white/[0.09] bg-obsidian/70 shadow-[0_24px_60px_-30px_rgba(0,0,0,1)] backdrop-blur-2xl"
+              : "border-white/[0.05] bg-obsidian/25 backdrop-blur-xl"
+          }`}
+        >
           <Logo />
-          <nav className="hidden items-center gap-1 lg:flex" aria-label="Principal">
+
+          <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Principal">
             {NAV.map((item) => {
               const active =
                 item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
@@ -61,128 +66,170 @@ export function Header({ user, unread }: { user: HeaderUser | null; unread: numb
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`focus-ring rounded-full px-3.5 py-2 text-[13.5px] font-medium transition-colors duration-200 ${
+                  className={`focus-ring relative rounded-full px-4 py-2 text-[13px] transition-colors duration-400 ${
                     active ? "text-ink" : "text-ink-muted hover:text-ink"
                   }`}
                 >
-                  {item.label}
+                  {active && (
+                    <span
+                      className="absolute inset-0 rounded-full bg-white/[0.06]"
+                      aria-hidden
+                    />
+                  )}
+                  <span className="relative">{item.label}</span>
                 </Link>
               );
             })}
           </nav>
-        </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          {user ? (
-            <>
-              <Link
-                href="/notifications"
-                className="focus-ring relative grid h-10 w-10 place-items-center rounded-full text-ink-muted transition-colors hover:bg-white/5 hover:text-ink"
-                aria-label={`Notificaciones${unread > 0 ? ` (${unread} sin leer)` : ""}`}
-              >
-                <IconBell />
-                {unread > 0 && (
-                  <span className="absolute right-1.5 top-1.5 grid h-[17px] min-w-[17px] place-items-center rounded-full bg-aurum px-1 text-[10px] font-bold text-obsidian">
-                    {unread > 9 ? "9+" : unread}
-                  </span>
-                )}
-              </Link>
-              <Link
-                href="/dashboard"
-                className="focus-ring hidden items-center gap-2.5 rounded-full border border-line bg-elevated px-3 py-2 text-[13px] font-medium text-ink transition-colors hover:border-aurum/40 sm:flex"
-              >
-                <span className="grid h-6 w-6 place-items-center rounded-full bg-aurum/15 text-aurum">
-                  <IconUser width={14} height={14} />
-                </span>
-                <span className="max-w-[120px] truncate">
-                  {user.displayName || user.email.split("@")[0]}
-                </span>
-              </Link>
-            </>
-          ) : (
-            <>
-              {/* El enlace se envuelve para que `hidden` no compita con el
-                  `inline-flex` del propio botón. */}
-              <span className="hidden sm:block">
-                <ButtonLink href="/login" variant="ghost" size="sm">
-                  Iniciar sesión
-                </ButtonLink>
-              </span>
-              <ButtonLink href="/register" size="sm">
-                Registrarse
-              </ButtonLink>
-            </>
-          )}
-
-          <button
-            type="button"
-            onClick={() => setOpen((v) => !v)}
-            className="focus-ring grid h-10 w-10 place-items-center rounded-full text-ink-muted transition-colors hover:bg-white/5 hover:text-ink lg:hidden"
-            aria-label={open ? "Cerrar menú" : "Abrir menú"}
-            aria-expanded={open}
-          >
-            {open ? <IconClose /> : <IconMenu />}
-          </button>
-        </div>
-      </div>
-
-      {open && (
-        <div className="fade-in fixed inset-x-0 top-[var(--header-h)] bottom-0 z-40 overflow-y-auto border-t border-line bg-obsidian/97 backdrop-blur-xl lg:hidden">
-          <nav className="flex flex-col gap-1 px-4 py-6" aria-label="Menú móvil">
-            {NAV.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="focus-ring rounded-xl px-4 py-3.5 font-display text-lg font-bold text-ink transition-colors hover:bg-white/5"
-              >
-                {item.label}
-              </Link>
-            ))}
-            <div className="hairline my-4" />
+          <div className="flex items-center gap-2">
             {user ? (
               <>
                 <Link
-                  href="/dashboard"
-                  className="rounded-xl px-4 py-3.5 text-[15px] text-ink-muted hover:text-ink"
+                  href="/notifications"
+                  className="focus-ring relative grid h-10 w-10 place-items-center rounded-full text-ink-muted transition-colors duration-400 hover:bg-white/[0.06] hover:text-ink"
+                  aria-label={`Notificaciones${unread > 0 ? ` (${unread} sin leer)` : ""}`}
                 >
-                  Mi cuenta
+                  <IconBell width={18} height={18} />
+                  {unread > 0 && (
+                    <span className="absolute right-2 top-2 h-[7px] w-[7px] rounded-full bg-aurum ring-[3px] ring-obsidian" />
+                  )}
                 </Link>
                 <Link
+                  href="/dashboard"
+                  className="focus-ring hidden items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.04] py-2 pl-2.5 pr-4 text-[13px] text-ink transition-all duration-400 hover:border-aurum/35 sm:flex"
+                >
+                  <span className="grid h-6 w-6 place-items-center rounded-full bg-aurum/15 text-aurum">
+                    <IconUser width={13} height={13} />
+                  </span>
+                  <span className="max-w-[110px] truncate">
+                    {user.displayName || user.email.split("@")[0]}
+                  </span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <span className="hidden sm:block">
+                  <ButtonLink href="/login" variant="ghost" size="sm">
+                    Entrar
+                  </ButtonLink>
+                </span>
+                <ButtonLink href="/register" size="sm">
+                  Crear cuenta
+                </ButtonLink>
+              </>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setOpen((v) => !v)}
+              className="focus-ring relative grid h-10 w-10 place-items-center rounded-full text-ink transition-colors duration-400 hover:bg-white/[0.06] lg:hidden"
+              aria-label={open ? "Cerrar menú" : "Abrir menú"}
+              aria-expanded={open}
+            >
+              {/* Las dos líneas rotan y se cruzan hasta formar la X */}
+              <span className="relative block h-[11px] w-[18px]" aria-hidden>
+                <span
+                  className={`absolute left-0 block h-[1.5px] w-full rounded-full bg-current transition-all duration-500 ease-[cubic-bezier(.32,.72,0,1)] ${
+                    open ? "top-[5px] rotate-45" : "top-0"
+                  }`}
+                />
+                <span
+                  className={`absolute left-0 block h-[1.5px] w-full rounded-full bg-current transition-all duration-500 ease-[cubic-bezier(.32,.72,0,1)] ${
+                    open ? "top-[5px] -rotate-45" : "top-[10px]"
+                  }`}
+                />
+              </span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Overlay a pantalla completa con revelado escalonado */}
+      <div
+        className={`fixed inset-0 z-30 bg-obsidian/92 backdrop-blur-3xl transition-opacity duration-500 ease-[cubic-bezier(.32,.72,0,1)] lg:hidden ${
+          open ? "opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <nav
+          className="flex h-full flex-col justify-center px-8 pb-24"
+          aria-label="Menú"
+          aria-hidden={!open}
+        >
+          {NAV.map((item, index) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              tabIndex={open ? 0 : -1}
+              className={`font-display border-b border-white/[0.06] py-5 text-4xl text-ink transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)] ${
+                open ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+              }`}
+              style={{ transitionDelay: open ? `${120 + index * 60}ms` : "0ms" }}
+            >
+              {item.label}
+            </Link>
+          ))}
+
+          <div
+            className={`mt-10 flex flex-col gap-3 transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)] ${
+              open ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+            }`}
+            style={{ transitionDelay: open ? "380ms" : "0ms" }}
+          >
+            {user ? (
+              <>
+                <ButtonLink href="/dashboard" size="lg" full icon tabIndex={open ? 0 : -1}>
+                  Mi cuenta
+                </ButtonLink>
+                <ButtonLink
                   href="/subscription"
-                  className="rounded-xl px-4 py-3.5 text-[15px] text-ink-muted hover:text-ink"
+                  variant="secondary"
+                  size="lg"
+                  full
+                  tabIndex={open ? 0 : -1}
                 >
                   Mi suscripción
-                </Link>
+                </ButtonLink>
                 {user.role === "ADMIN" && (
-                  <Link
+                  <ButtonLink
                     href="/admin"
-                    className="rounded-xl px-4 py-3.5 text-[15px] text-aurum hover:text-aurum-soft"
+                    variant="outline"
+                    size="lg"
+                    full
+                    tabIndex={open ? 0 : -1}
                   >
-                    Panel de administración
-                  </Link>
+                    Administración
+                  </ButtonLink>
                 )}
-                <form action="/api/auth/logout" method="post" className="px-4 pt-3">
+                <form action="/api/auth/logout" method="post" className="pt-2">
                   <button
                     type="submit"
-                    className="focus-ring text-[15px] font-medium text-danger"
+                    tabIndex={open ? 0 : -1}
+                    className="focus-ring w-full py-3 text-[14px] text-danger"
                   >
                     Cerrar sesión
                   </button>
                 </form>
               </>
             ) : (
-              <div className="flex flex-col gap-3 px-1 pt-2">
-                <ButtonLink href="/register" size="lg" full>
+              <>
+                <ButtonLink href="/register" size="lg" full icon tabIndex={open ? 0 : -1}>
                   Crear cuenta
                 </ButtonLink>
-                <ButtonLink href="/login" variant="secondary" size="lg" full>
+                <ButtonLink
+                  href="/login"
+                  variant="secondary"
+                  size="lg"
+                  full
+                  tabIndex={open ? 0 : -1}
+                >
                   Iniciar sesión
                 </ButtonLink>
-              </div>
+              </>
             )}
-          </nav>
-        </div>
-      )}
-    </header>
+          </div>
+        </nav>
+      </div>
+    </>
   );
 }

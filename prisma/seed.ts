@@ -23,42 +23,82 @@ const DEMO_PASSWORD = "Demo2026Cuenta";
 const DEMO_VIDEO_PATH = process.env.SEED_VIDEO_PATH ?? "";
 
 const PALETTES = [
-  ["#1b1b22", "#3a3550", "#c8a063"],
-  ["#141420", "#2c3344", "#aab4c4"],
-  ["#1a1418", "#4a2f3a", "#e0c493"],
-  ["#12181a", "#27424a", "#8fb3bd"],
-  ["#1d1a14", "#4a3d24", "#c8a063"],
-  ["#17141d", "#382a4d", "#b39ddb"],
+  ["#3a2b3d", "#8a5f6e", "#f0cfa8", "#0f0a11"],
+  ["#22303f", "#4f7590", "#cfe2f0", "#0a1017"],
+  ["#3b2422", "#945143", "#f7cfae", "#130b0a"],
+  ["#1b312c", "#3f8272", "#b8e6d2", "#08110f"],
+  ["#372c1a", "#94793c", "#f7e2ad", "#120e06"],
+  ["#2a2140", "#5f4795", "#d5c2f5", "#0d0916"],
 ];
 
-/** Miniatura generada: degradado + numeración, sin dependencias externas. */
+/**
+ * Fotograma sintético para la demo.
+ *
+ * Geometría nítida —luz de contra, haz diagonal, horizonte y viñeta— en vez
+ * de desenfoques: se lee como un plano cinematográfico y aguanta bien de
+ * portada a pantalla completa. En producción lo sustituyen las miniaturas
+ * reales que suba el administrador.
+ */
 function thumbnailSvg(index: number, title: string): string {
-  const [from, to, accent] = PALETTES[index % PALETTES.length];
+  const [deep, mid, light, shadow] = PALETTES[index % PALETTES.length];
   const number = String(index + 1).padStart(2, "0");
   const safeTitle = title.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const beamX = 340 + (index % 4) * 190;
+  const horizon = 560 + (index % 3) * 70;
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="${from}"/>
-      <stop offset="100%" stop-color="${to}"/>
+    <linearGradient id="sky" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0%" stop-color="${mid}"/>
+      <stop offset="60%" stop-color="${deep}"/>
+      <stop offset="100%" stop-color="${shadow}"/>
     </linearGradient>
-    <radialGradient id="h" cx="0.25" cy="0.2" r="0.8">
-      <stop offset="0%" stop-color="${accent}" stop-opacity="0.34"/>
-      <stop offset="100%" stop-color="${accent}" stop-opacity="0"/>
+    <radialGradient id="key" cx="0.62" cy="0.26" r="0.55">
+      <stop offset="0%" stop-color="${light}" stop-opacity="0.72"/>
+      <stop offset="40%" stop-color="${light}" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="${light}" stop-opacity="0"/>
     </radialGradient>
+    <linearGradient id="shaft" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${light}" stop-opacity="0.34"/>
+      <stop offset="70%" stop-color="${light}" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="${light}" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${shadow}" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="${shadow}" stop-opacity="0.95"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx="0.5" cy="0.44" r="0.8">
+      <stop offset="52%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.6"/>
+    </radialGradient>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3"/>
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
   </defs>
-  <rect width="1280" height="720" fill="url(#g)"/>
-  <rect width="1280" height="720" fill="url(#h)"/>
-  <g opacity="0.16" stroke="${accent}" stroke-width="1.2" fill="none">
-    <circle cx="1040" cy="180" r="150"/>
-    <circle cx="1040" cy="180" r="230"/>
-    <circle cx="1040" cy="180" r="310"/>
-  </g>
-  <text x="72" y="600" font-family="Helvetica,Arial,sans-serif" font-size="150" font-weight="800"
-        fill="${accent}" opacity="0.5" letter-spacing="-8">${number}</text>
-  <text x="72" y="660" font-family="Helvetica,Arial,sans-serif" font-size="30" font-weight="600"
-        fill="#f5f3ef" opacity="0.88">${safeTitle}</text>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <rect width="1600" height="900" fill="url(#key)"/>
+
+  <!-- Haces de luz entrando en diagonal -->
+  <polygon points="${beamX},0 ${beamX + 150},0 ${beamX - 190},900 ${beamX - 430},900" fill="url(#shaft)"/>
+  <polygon points="${beamX + 250},0 ${beamX + 305},0 ${beamX + 70},900 ${beamX - 45},900" fill="url(#shaft)" opacity="0.55"/>
+
+  <!-- Horizonte: separa el plano y da profundidad -->
+  <rect x="0" y="${horizon}" width="1600" height="${900 - horizon}" fill="url(#floor)"/>
+  <line x1="0" y1="${horizon}" x2="1600" y2="${horizon}" stroke="${light}" stroke-width="1" opacity="0.22"/>
+
+  <!-- Reflejo tenue del haz sobre el suelo -->
+  <polygon points="${beamX - 190},${horizon} ${beamX - 60},${horizon} ${beamX - 250},900 ${beamX - 460},900"
+           fill="${light}" opacity="0.07"/>
+
+  <rect width="1600" height="900" fill="url(#vignette)"/>
+  <rect width="1600" height="900" filter="url(#grain)" opacity="0.06"/>
+
+  <text x="86" y="768" font-family="Georgia,'Times New Roman',serif" font-size="150" font-style="italic"
+        fill="${light}" opacity="0.34" letter-spacing="-5">${number}</text>
+  <text x="92" y="826" font-family="Helvetica,Arial,sans-serif" font-size="25"
+        fill="#ffffff" opacity="0.7" letter-spacing="0.5">${safeTitle}</text>
 </svg>`;
 }
 
@@ -287,6 +327,7 @@ async function main() {
         status: "PUBLISHED",
         durationSeconds: item.duration,
         sortOrder: index,
+        featured: index < 3,
         viewCount: Math.floor(Math.random() * 900) + 40,
         publishedAt,
         thumbnailKey: "",
