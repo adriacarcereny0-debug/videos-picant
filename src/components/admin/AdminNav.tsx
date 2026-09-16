@@ -65,7 +65,7 @@ export function AdminNav({ pendingReports }: { pendingReports: number }) {
           </span>
           Ver como usuario
         </Link>
-        <form action="/api/auth/logout" method="post">
+        <form action="/api/admin/logout" method="post">
           <button
             type="submit"
             className="focus-ring flex w-full items-center gap-3 border-l-2 border-transparent py-2.5 pl-4 text-[13px] font-medium text-ink-muted transition-colors duration-300 hover:text-danger"

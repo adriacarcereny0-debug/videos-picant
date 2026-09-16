@@ -27,7 +27,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="hidden text-[13px] text-ink-muted sm:inline">{admin.email}</span>
+            <span className="hidden text-[12px] text-ink-faint sm:inline">
+              {admin?.email ?? "Acceso por contraseña"}
+            </span>
             <Link
               href="/"
               className="focus-ring rounded-full border border-line px-3.5 py-2 text-[13px] font-medium text-ink-muted transition-colors hover:border-lip/40 hover:text-ink"

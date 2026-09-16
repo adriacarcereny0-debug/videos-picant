@@ -12,10 +12,13 @@ import { NextResponse, type NextRequest } from "next/server";
 
 const AGE_COOKIE = "madrastras_age_ok";
 const SESSION_COOKIE = "madrastras_session";
+const ADMIN_GATE_COOKIE = "madrastras_admin";
 
 /** Rutas accesibles sin confirmar la edad. */
 const AGE_EXEMPT = [
   "/age-verification",
+  // El panel no muestra contenido: no tiene sentido pedir la edad ahí.
+  "/admin",
   "/terms",
   "/privacy",
   "/cookies",
@@ -30,7 +33,6 @@ const PRIVATE_PREFIXES = [
   "/subscription",
   "/notifications",
   "/profile",
-  "/admin",
 ];
 
 export default function proxy(request: NextRequest) {
@@ -44,6 +46,18 @@ export default function proxy(request: NextRequest) {
     url.pathname = "/age-verification";
     url.search = `?next=${encodeURIComponent(pathname + search)}`;
     return NextResponse.redirect(url);
+  }
+
+  // El panel tiene su propia puerta: contraseña única o cuenta con rol ADMIN.
+  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+    const hasGate = Boolean(request.cookies.get(ADMIN_GATE_COOKIE));
+    const hasSession = Boolean(request.cookies.get(SESSION_COOKIE));
+    if (!hasGate && !hasSession) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/login";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
   }
 
   const isPrivate = PRIVATE_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));

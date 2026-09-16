@@ -119,11 +119,19 @@ export async function requireUser(redirectTo = "/login"): Promise<SessionUser> {
   return user;
 }
 
-export async function requireAdmin(): Promise<SessionUser> {
+/**
+ * Acceso al panel. Vale cualquiera de las dos puertas:
+ * el rol ADMIN de una cuenta, o la contraseña única del panel.
+ */
+export async function requireAdmin(): Promise<SessionUser | null> {
   const user = await getCurrentUser();
-  if (!user) redirect("/login?next=/admin");
-  if (user.role !== "ADMIN") redirect("/dashboard?error=forbidden");
-  return user;
+  if (user?.role === "ADMIN") return user;
+
+  const { adminGateOpen } = await import("@/lib/adminGate");
+  if (await adminGateOpen()) return user;
+
+  if (user) redirect("/dashboard?error=forbidden");
+  redirect("/admin/login");
 }
 
 export async function hasConfirmedAge(): Promise<boolean> {

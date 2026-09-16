@@ -59,6 +59,15 @@ export const env = {
   sessionTtlDays: Number(process.env.SESSION_TTL_DAYS ?? 7),
   sessionRememberTtlDays: Number(process.env.SESSION_REMEMBER_TTL_DAYS ?? 30),
 
+  /**
+   * Contraseña única del panel de administración.
+   *
+   * Vive en el entorno a propósito: el repositorio es público y una clave
+   * escrita en el código la puede leer cualquiera. El valor por defecto solo
+   * sirve para arrancar sin configurar nada.
+   */
+  adminPassword: process.env.ADMIN_PASSWORD?.trim() || "madrastas123",
+
   // Stripe (solo backend)
   stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",

@@ -62,7 +62,7 @@ export default async function HomePage() {
             className="display-xl rise mt-6 max-w-[13ch] text-balance text-ink"
             style={{ animationDelay: "80ms" }}
           >
-            Lo que aquí dentro se queda <span className="text-lip">dentro</span>
+            Lo que pasa aquí, se queda <span className="text-lip">aquí</span>
           </h1>
 
           <div

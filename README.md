@@ -294,6 +294,7 @@ El panel elige la vía automáticamente según el driver activo.
    | --- | --- |
    | `DATABASE_URL` | URL de tu Postgres |
    | `SESSION_SECRET` | 32+ caracteres aleatorios (`openssl rand -base64 48`) |
+   | `ADMIN_PASSWORD` | Contraseña de acceso a `/admin`. Cámbiala: el repositorio es público |
    | `APP_URL` | `https://tu-dominio.vercel.app` |
    | `STORAGE_DRIVER` | `blob` |
    | `DEMO_MODE` | `false` cuando conectes Stripe de verdad |
@@ -338,3 +339,21 @@ respuestas automáticas para una web de este sector.
   por completo cuando el sistema pide movimiento reducido.
 - **Textura.** Trama de grano fija sobre el conjunto, para que las superficies
   planas no parezcan vectores.
+
+---
+
+## 15. Acceso al panel
+
+`/admin` acepta dos puertas:
+
+1. **Contraseña única**, en `/admin/login`. Sin correo. Abre una sesión de panel
+   de 12 horas en una cookie HttpOnly firmada, independiente de la sesión de
+   usuario. La contraseña se lee de `ADMIN_PASSWORD`.
+2. **Cuenta con rol `ADMIN`**, entrando por el acceso normal del sitio.
+
+La primera puerta es cómoda, pero una clave corta y compartida es fácil de
+probar por fuerza bruta. Por eso el endpoint limita a cinco intentos por IP cada
+quince minutos y registra cada intento fallido en el histórico de seguridad.
+
+**Cambia `ADMIN_PASSWORD` en producción.** El valor por defecto está escrito en
+el código de un repositorio público.
