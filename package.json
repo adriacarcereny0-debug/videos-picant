@@ -1,8 +1,8 @@
 {
-  "name": "noctra",
+  "name": "madrastras",
   "version": "1.0.0",
   "private": true,
-  "description": "Noctra — plataforma premium de video privado bajo suscripcion",
+  "description": "Madrastras — plataforma premium de video privado bajo suscripcion",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && node scripts/migrate-deploy.mjs && next build",

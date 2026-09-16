@@ -11,9 +11,9 @@ export const checkSetup = cache(
   async (): Promise<{ ready: boolean; missing: string[] }> => {
     const missing: string[] = [];
 
-    if (!env.databaseUrl) missing.push("DATABASE_URL — cadena de conexión de PostgreSQL");
+    if (!env.databaseUrl) missing.push("DATABASE_URL (cadena de conexión de PostgreSQL)");
     if (!isSessionSecretConfigured()) {
-      missing.push("SESSION_SECRET — 32+ caracteres aleatorios para firmar sesiones");
+      missing.push("SESSION_SECRET (32 caracteres aleatorios como mínimo)");
     }
 
     if (missing.length > 0) return { ready: false, missing };
@@ -25,7 +25,7 @@ export const checkSetup = cache(
       return {
         ready: false,
         missing: [
-          "DATABASE_URL — definida, pero la base de datos no responde o el esquema no se ha aplicado",
+          "DATABASE_URL está definida, pero la base de datos no responde o el esquema no se ha aplicado",
         ],
       };
     }

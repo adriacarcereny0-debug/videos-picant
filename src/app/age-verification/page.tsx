@@ -42,7 +42,7 @@ export default async function AgeVerificationPage({
 
   return (
     <main className="grain relative grid min-h-dvh place-items-center overflow-hidden px-4 py-12">
-      <div className="aurum-glow" aria-hidden />
+      <div className="lip-glow" aria-hidden />
 
       <div className="relative z-10 w-full max-w-lg">
         <div className="surface rise p-8 text-center sm:p-11">
@@ -57,7 +57,7 @@ export default async function AgeVerificationPage({
           </h1>
 
           <p className="mx-auto mb-9 max-w-md text-[15px] leading-relaxed text-ink-muted">
-            El contenido alojado en Noctra es de carácter privado y está destinado únicamente a
+            El contenido alojado en Madrastras es de carácter privado y está destinado únicamente a
             un público adulto. Confirma tu edad para continuar.
           </p>
 

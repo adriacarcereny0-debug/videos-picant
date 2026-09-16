@@ -50,7 +50,7 @@ export function ReportDialog({ videoId }: { videoId: string }) {
 
       {open && (
         <div
-          className="fade-in fixed inset-0 z-[60] grid place-items-center bg-obsidian/80 p-4 backdrop-blur-sm"
+          className="fade-in fixed inset-0 z-[60] grid place-items-center bg-noir/80 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
           aria-label="Reportar contenido"

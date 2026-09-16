@@ -1,4 +1,4 @@
-# Noctra
+# Madrastras
 
 Plataforma web **premium de vídeo privado bajo suscripción**, exclusiva para mayores de 18 años.
 Identidad, diseño, arquitectura y código originales.
@@ -16,7 +16,7 @@ chats, propinas, monedas virtuales, marketplace ni gamificación.
 | Acceso | Verificación de edad obligatoria, registro, login, verificación de correo, recuperación de contraseña |
 | Suscripciones | Dos planes mensuales: **Básico 9,99 €** y **Premium 19,99 €** |
 | Pagos | Stripe Checkout + Billing + Customer Portal + webhooks firmados |
-| Contenido | Catálogo con niveles `BASIC` / `PREMIUM`, tarjetas bloqueadas y reproductor propio |
+| Contenido | Catálogo con niveles `BASIC` / `PREMIUM`, fichas bloqueadas y reproductor propio |
 | Portada | El hero usa la imagen del vídeo que marques como destacado en `/admin/videos`; con varios, rota |
 | Protección | Almacenamiento privado, URLs firmadas de caducidad corta, autorización siempre en servidor |
 | Cuenta | Dashboard, gestión de suscripción, notificaciones, perfil |
@@ -186,10 +186,10 @@ npm run dev                   # http://localhost:3000
 
 | Rol | Correo | Contraseña |
 | --- | --- | --- |
-| Administrador | `admin@noctra.example` | `Noctra2026Admin` |
-| Free | `free@noctra.example` | `Demo2026Cuenta` |
-| Básico | `basic@noctra.example` | `Demo2026Cuenta` |
-| Premium | `premium@noctra.example` | `Demo2026Cuenta` |
+| Administrador | `admin@madrastras.example` | `Madrastras2026Admin` |
+| Free | `free@madrastras.example` | `Demo2026Cuenta` |
+| Básico | `basic@madrastras.example` | `Demo2026Cuenta` |
+| Premium | `premium@madrastras.example` | `Demo2026Cuenta` |
 
 El *seed* genera fichas con miniatura, pero **sin archivo de vídeo reproducible**. Para
 reproducir de verdad en la demo: sube vídeos desde `/admin/videos`, o siembra con un MP4 real:
@@ -234,7 +234,7 @@ prisma/
   seed.ts                Datos ficticios de demostración
 src/
   app/
-    (site)/              Público: landing, catálogo, ficha, precios, FAQ, legales, contacto
+    (site)/              Público: landing, catálogo, ficha, precios, legales, contacto
     (auth)/              Registro, login, recuperación, verificación
     (app)/               Privado: dashboard, suscripción, notificaciones, perfil
     admin/               Panel de administración
@@ -316,3 +316,25 @@ El *seed* no se ejecuta automáticamente. Para cargarlo contra la base de datos 
 ```bash
 DATABASE_URL="postgresql://…" npm run db:seed
 ```
+
+---
+
+## 14. Identidad visual
+
+La marca es **Madrastras** y el lenguaje visual es el de una fotonovela impresa,
+deliberadamente lejos tanto del neón rosa como del oro de lujo, que son las dos
+respuestas automáticas para una web de este sector.
+
+- **Color.** Estrategia comprometida: el carmín `oklch(0.585 0.205 22)` no es un
+  acento del 10%, sostiene secciones enteras. Ningún neutro es negro ni blanco
+  puro: todos van teñidos hacia el rojo de la marca.
+- **Tipografía.** Anton para los titulares, tratados como un cartel (versalitas,
+  interlineado por debajo de 1, muy apretado). Geist para interfaz y lectura.
+- **Superficies.** Rectángulos con radio mínimo, filetes de 1px y filetes carmín
+  de 2px para separar. Sin tarjetas anidadas, sin cristal esmerilado, sin
+  sombras decorativas.
+- **Movimiento.** Solo dos gestos: la entrada escalonada al aparecer en pantalla
+  y el encadenado de portadas. Todo con curvas de salida exponencial, y anulado
+  por completo cuando el sistema pide movimiento reducido.
+- **Textura.** Trama de grano fija sobre el conjunto, para que las superficies
+  planas no parezcan vectores.

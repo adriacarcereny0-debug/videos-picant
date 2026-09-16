@@ -80,13 +80,13 @@ export function LoginForm() {
               type="checkbox"
               name="remember"
               defaultChecked
-              className="h-4 w-4 rounded border-line bg-elevated accent-[#c8a063]"
+              className="h-4 w-4 rounded border-line bg-raised accent-[#c8a063]"
             />
             Recordarme
           </label>
           <Link
             href="/forgot-password"
-            className="focus-ring text-[13px] text-aurum hover:text-aurum-soft"
+            className="focus-ring text-[13px] text-lip hover:text-lip-soft"
           >
             ¿Olvidaste tu contraseña?
           </Link>
@@ -99,7 +99,7 @@ export function LoginForm() {
 
       <p className="mt-8 text-center text-sm text-ink-muted">
         ¿Todavía no tienes cuenta?{" "}
-        <Link href="/register" className="font-semibold text-aurum hover:text-aurum-soft">
+        <Link href="/register" className="font-semibold text-lip hover:text-lip-soft">
           Regístrate
         </Link>
       </p>
@@ -222,7 +222,7 @@ export function RegisterForm() {
               type="checkbox"
               name="confirmAge"
               required
-              className="mt-0.5 h-4 w-4 shrink-0 rounded border-line bg-elevated accent-[#c8a063]"
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-line bg-raised accent-[#c8a063]"
             />
             Confirmo que soy mayor de 18 años.
           </label>
@@ -231,15 +231,15 @@ export function RegisterForm() {
               type="checkbox"
               name="acceptTerms"
               required
-              className="mt-0.5 h-4 w-4 shrink-0 rounded border-line bg-elevated accent-[#c8a063]"
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-line bg-raised accent-[#c8a063]"
             />
             <span>
               Acepto los{" "}
-              <Link href="/terms" className="text-aurum underline underline-offset-2">
+              <Link href="/terms" className="text-lip underline underline-offset-2">
                 términos y condiciones
               </Link>{" "}
               y la{" "}
-              <Link href="/privacy" className="text-aurum underline underline-offset-2">
+              <Link href="/privacy" className="text-lip underline underline-offset-2">
                 política de privacidad
               </Link>
               .
@@ -254,7 +254,7 @@ export function RegisterForm() {
 
       <p className="mt-8 text-center text-sm text-ink-muted">
         ¿Ya tienes cuenta?{" "}
-        <Link href="/login" className="font-semibold text-aurum hover:text-aurum-soft">
+        <Link href="/login" className="font-semibold text-lip hover:text-lip-soft">
           Inicia sesión
         </Link>
       </p>
@@ -290,7 +290,7 @@ export function ForgotPasswordForm() {
         </Alert>
         <Link
           href="/login"
-          className="mt-8 block text-center text-sm font-semibold text-aurum hover:text-aurum-soft"
+          className="mt-8 block text-center text-sm font-semibold text-lip hover:text-lip-soft"
         >
           Volver a iniciar sesión
         </Link>

@@ -231,7 +231,7 @@ export function VideoPlayer({
           <div className="absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 overflow-hidden rounded-full bg-white/18">
             <div className="h-full bg-white/25" style={{ width: `${bufferedPct}%` }} />
             <div
-              className="absolute inset-y-0 left-0 bg-aurum"
+              className="absolute inset-y-0 left-0 bg-lip"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -384,11 +384,11 @@ function MenuItem({
       type="button"
       onClick={onClick}
       className={`flex w-full items-center justify-between px-3.5 py-2 text-left text-[13px] transition-colors hover:bg-white/6 ${
-        active ? "font-bold text-aurum" : "text-ink-muted"
+        active ? "font-bold text-lip" : "text-ink-muted"
       }`}
     >
       {children}
-      {active && <span className="text-aurum">•</span>}
+      {active && <span className="text-lip">•</span>}
     </button>
   );
 }

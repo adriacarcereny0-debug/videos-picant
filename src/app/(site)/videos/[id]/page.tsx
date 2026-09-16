@@ -119,7 +119,7 @@ export default async function VideoDetailPage({
               {!user && (
                 <p className="mt-4 text-center text-[13px] text-ink-faint">
                   ¿Ya tienes cuenta?{" "}
-                  <Link href={`/login?next=/videos/${video.id}`} className="text-aurum">
+                  <Link href={`/login?next=/videos/${video.id}`} className="text-lip">
                     Inicia sesión
                   </Link>
                 </p>
@@ -157,7 +157,7 @@ function LockedPreview({
   reason?: string;
 }) {
   return (
-    <div className="relative aspect-video overflow-hidden rounded-2xl border border-line bg-elevated">
+    <div className="relative aspect-video overflow-hidden rounded-2xl border border-line bg-raised">
       <Image
         src={thumbnail}
         alt=""
@@ -169,7 +169,7 @@ function LockedPreview({
       />
       <div className="absolute inset-0 grid place-items-center px-6">
         <div className="max-w-sm text-center">
-          <span className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-full border border-aurum/35 bg-obsidian/70 text-aurum backdrop-blur-md">
+          <span className="mx-auto mb-5 grid h-16 w-16 place-items-center rounded-full border border-lip/35 bg-noir/70 text-lip backdrop-blur-md">
             <IconLock width={26} height={26} />
           </span>
           <h2 className="font-display text-xl font-bold tracking-[-0.03em] text-ink">

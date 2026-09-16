@@ -5,7 +5,7 @@ import { ButtonLink } from "@/components/ui";
 export default function NotFound() {
   return (
     <div className="grain relative grid min-h-dvh place-items-center overflow-hidden px-4">
-      <div className="aurum-glow" aria-hidden />
+      <div className="lip-glow" aria-hidden />
       <div className="relative z-10 max-w-md text-center">
         <div className="mb-10 flex justify-center">
           <Logo size="lg" />

@@ -34,16 +34,16 @@ export function AdminNav({ pendingReports }: { pendingReports: number }) {
             <li key={item.href} className="shrink-0 lg:shrink">
               <Link
                 href={item.href}
-                className={`focus-ring flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-medium transition-all duration-300 ${
+                className={`focus-ring flex items-center gap-3 border-l-2 py-2.5 pl-4 text-[13px] font-medium transition-colors duration-300 ${
                   active
-                    ? "bg-white/[0.06] text-ink"
-                    : "text-ink-muted hover:bg-white/[0.03] hover:text-ink"
+                    ? "border-lip text-ink"
+                    : "border-transparent text-ink-muted hover:text-ink"
                 }`}
               >
-                <span className={active ? "text-aurum" : "text-ink-faint"}>{item.icon}</span>
+                <span className={active ? "text-lip" : "text-ink-faint"}>{item.icon}</span>
                 {item.label}
                 {item.href === "/admin/reports" && pendingReports > 0 && (
-                  <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-danger/20 px-1.5 text-[10px] font-bold text-danger">
+                  <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-[2px] bg-danger px-1.5 text-[10px] font-bold text-noir">
                     {pendingReports}
                   </span>
                 )}
@@ -58,7 +58,7 @@ export function AdminNav({ pendingReports }: { pendingReports: number }) {
       <div className="hidden space-y-1 lg:block">
         <Link
           href="/dashboard"
-          className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-medium text-ink-muted transition-colors hover:bg-white/[0.03] hover:text-ink"
+          className="flex items-center gap-3 border-l-2 border-transparent py-2.5 pl-4 text-[13px] font-medium text-ink-muted transition-colors duration-300 hover:text-ink"
         >
           <span className="text-ink-faint">
             <IconChart />
@@ -68,7 +68,7 @@ export function AdminNav({ pendingReports }: { pendingReports: number }) {
         <form action="/api/auth/logout" method="post">
           <button
             type="submit"
-            className="focus-ring flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-medium text-ink-muted transition-colors hover:bg-danger/10 hover:text-danger"
+            className="focus-ring flex w-full items-center gap-3 border-l-2 border-transparent py-2.5 pl-4 text-[13px] font-medium text-ink-muted transition-colors duration-300 hover:text-danger"
           >
             <span className="text-ink-faint">
               <IconLogout />

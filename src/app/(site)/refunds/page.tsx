@@ -3,7 +3,7 @@ import { LegalLayout, LegalSection } from "@/components/LegalLayout";
 
 export const metadata: Metadata = {
   title: "Cancelación y reembolsos",
-  description: "Condiciones de cancelación y política de reembolsos de Noctra.",
+  description: "Condiciones de cancelación y política de reembolsos de Madrastras.",
   alternates: { canonical: "/refunds" },
 };
 

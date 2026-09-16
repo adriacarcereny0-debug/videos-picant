@@ -3,7 +3,7 @@ import { env } from "@/lib/env";
 
 /** Solo páginas públicas: el catálogo y las zonas privadas no se indexan. */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = ["", "/pricing", "/faq", "/contact", "/terms", "/privacy", "/cookies", "/refunds"];
+  const routes = ["", "/pricing", "/contact", "/terms", "/privacy", "/cookies", "/refunds"];
 
   return routes.map((route) => ({
     url: `${env.appUrl}${route}`,

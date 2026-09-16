@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     await notify(
       user.id,
       "WELCOME",
-      "Bienvenido a Noctra",
+      "Bienvenido a Madrastras",
       "Tu cuenta ya está creada. Elige una suscripción para acceder al catálogo privado.",
       "/pricing",
     );

@@ -52,63 +52,81 @@ export function PlanGrid({
 
   return (
     <div>
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid items-stretch gap-px bg-line lg:grid-cols-2">
         {PLAN_LIST.map((plan) => {
           const isCurrent = currentPlan === plan.key;
-          const isPremium = plan.accent === "aurum";
+          const isPremium = plan.accent === "lip";
 
           return (
             <div
               key={plan.key}
-              className={`surface relative flex flex-col overflow-hidden p-7 sm:p-9 ${
-                isPremium ? "border-aurum/35" : ""
+              className={`relative flex flex-col p-8 sm:p-10 ${
+                isPremium ? "bg-lip text-noir" : "border border-line bg-surface"
               }`}
             >
               {isPremium && (
-                <>
-                  <div
-                    className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-aurum to-transparent"
-                    aria-hidden
-                  />
-                  <span className="absolute right-6 top-7 rounded-full border border-aurum/40 bg-aurum/12 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-aurum-soft">
-                    Acceso total
-                  </span>
-                </>
+                <span className="absolute right-8 top-10 text-[10px] font-semibold uppercase tracking-[0.16em] text-noir/70">
+                  Acceso total
+                </span>
               )}
 
               <h3
-                className={`font-display text-xl font-bold tracking-[-0.03em] ${
-                  isPremium ? "text-aurum-soft" : "text-silver"
+                className={`font-display text-[28px] leading-none ${
+                  isPremium ? "text-noir" : "text-ink"
                 }`}
               >
                 {plan.name}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink-muted">{plan.tagline}</p>
+              <p
+                className={`mt-3 text-[14px] leading-relaxed ${
+                  isPremium ? "text-noir/70" : "text-ink-muted"
+                }`}
+              >
+                {plan.tagline}
+              </p>
 
-              <div className="mt-7 flex items-baseline gap-2">
-                <span className="font-display text-5xl font-extrabold tracking-[-0.045em] text-ink">
+              <div className="mt-8 flex items-baseline gap-2">
+                <span
+                  className={`font-display text-[56px] leading-none tabular ${
+                    isPremium ? "text-noir" : "text-ink"
+                  }`}
+                >
                   {plan.priceLabel}
                 </span>
-                <span className="text-sm text-ink-faint">/ mes</span>
+                <span className={isPremium ? "text-[13px] text-noir/60" : "text-[13px] text-ink-faint"}>
+                  / mes
+                </span>
               </div>
-              <p className="mt-1.5 text-xs text-ink-faint">IVA incluido · Facturación mensual</p>
+              <p
+                className={`mt-2 text-[12px] ${isPremium ? "text-noir/55" : "text-ink-faint"}`}
+              >
+                IVA incluido, facturación mensual
+              </p>
 
-              <div className="hairline my-7" />
+              <div
+                className={`my-8 h-px ${isPremium ? "bg-noir/20" : "bg-line"}`}
+                aria-hidden
+              />
 
+              {/* Alto fijo para que las listas arranquen a la misma altura */}
               <ul className="flex-1 space-y-3.5">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex gap-3 text-[14.5px] leading-snug text-ink-muted">
-                    <span
-                      className={`mt-0.5 shrink-0 ${isPremium ? "text-aurum" : "text-silver"}`}
-                    >
-                      <IconCheck width={17} height={17} />
+                  <li
+                    key={feature}
+                    className={`flex gap-3 text-[14px] leading-snug ${
+                      isPremium ? "text-noir/85" : "text-ink-muted"
+                    }`}
+                  >
+                    <span className={`mt-0.5 shrink-0 ${isPremium ? "text-noir" : "text-lip"}`}>
+                      <IconCheck width={16} height={16} />
                     </span>
                     {feature}
                   </li>
                 ))}
               </ul>
 
-              <div className="mt-8">
+              {/* La llamada a la acción queda anclada abajo en ambas columnas */}
+              <div className="mt-10">
                 {isCurrent ? (
                   <Button variant="secondary" full size="lg" disabled>
                     Tu plan actual
@@ -117,7 +135,8 @@ export function PlanGrid({
                   <Button
                     full
                     size="lg"
-                    variant={isPremium ? "primary" : "secondary"}
+                    variant={isPremium ? "secondary" : "primary"}
+                    className={isPremium ? "border-noir bg-noir text-ink hover:bg-noir/90" : ""}
                     onClick={() => subscribe(plan.key)}
                     disabled={loading !== null}
                   >
@@ -135,14 +154,14 @@ export function PlanGrid({
       </div>
 
       {error && (
-        <p className="mt-6 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
+        <p className="mt-6 border border-danger/40 px-4 py-3 text-sm text-danger">
           {error}
         </p>
       )}
 
-      <p className="mt-8 text-center text-xs leading-relaxed text-ink-faint">
-        Los pagos se procesan a través de Stripe. Noctra no almacena en ningún momento los datos
-        de tu tarjeta.
+      <p className="mt-8 text-[12px] leading-relaxed text-ink-faint">
+        Los pagos se procesan con Stripe. Madrastras no almacena en ningún momento los datos de
+        tu tarjeta.
       </p>
     </div>
   );

@@ -3,7 +3,7 @@ import { LegalLayout, LegalSection } from "@/components/LegalLayout";
 
 export const metadata: Metadata = {
   title: "Política de cookies",
-  description: "Qué cookies utiliza Noctra y con qué finalidad.",
+  description: "Qué cookies utiliza Madrastras y con qué finalidad.",
   alternates: { canonical: "/cookies" },
 };
 
@@ -17,12 +17,12 @@ export default function CookiesPage() {
       <LegalSection title="Cookies que utilizamos">
         <ul className="space-y-3">
           <li>
-            <strong>noctra_session</strong> — cookie técnica de sesión. HttpOnly, Secure y
+            <strong>madrastras_session</strong> — cookie técnica de sesión. HttpOnly, Secure y
             SameSite=Lax. Permite mantener tu sesión iniciada. Caduca a los 7 días, o a los 30 si
             marcas «Recordarme».
           </li>
           <li>
-            <strong>noctra_age_ok</strong> — cookie técnica que recuerda que has confirmado ser
+            <strong>madrastras_age_ok</strong> — cookie técnica que recuerda que has confirmado ser
             mayor de 18 años, para no mostrarte la pantalla de verificación en cada visita.
             Caduca a los 90 días.
           </li>

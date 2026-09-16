@@ -3,7 +3,7 @@ import { LegalLayout, LegalSection } from "@/components/LegalLayout";
 
 export const metadata: Metadata = {
   title: "Política de privacidad",
-  description: "Cómo tratamos tus datos personales en Noctra.",
+  description: "Cómo tratamos tus datos personales en Madrastras.",
   alternates: { canonical: "/privacy" },
 };
 

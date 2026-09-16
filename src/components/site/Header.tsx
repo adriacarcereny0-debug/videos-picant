@@ -18,7 +18,6 @@ const NAV = [
   { href: "/", label: "Inicio" },
   { href: "/videos", label: "Vídeos" },
   { href: "/pricing", label: "Suscripciones" },
-  { href: "/faq", label: "FAQ" },
 ];
 
 /**
@@ -50,10 +49,8 @@ export function Header({ user, unread }: { user: HeaderUser | null; unread: numb
     <>
       <header className="pointer-events-none fixed inset-x-0 top-0 z-40 flex justify-center px-4 pt-5 sm:pt-6">
         <div
-          className={`pointer-events-auto flex w-full max-w-[1180px] items-center justify-between gap-6 rounded-full border px-3 py-2.5 pl-5 transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)] sm:px-4 sm:pl-6 ${
-            scrolled
-              ? "border-white/[0.09] bg-obsidian/70 shadow-[0_24px_60px_-30px_rgba(0,0,0,1)] backdrop-blur-2xl"
-              : "border-white/[0.05] bg-obsidian/25 backdrop-blur-xl"
+          className={`pointer-events-auto flex w-full max-w-[1180px] items-center justify-between gap-6 border-b px-1 py-4 transition-colors duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
+            scrolled ? "border-line bg-noir/95 backdrop-blur-md" : "border-transparent"
           }`}
         >
           <Logo />
@@ -66,17 +63,17 @@ export function Header({ user, unread }: { user: HeaderUser | null; unread: numb
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`focus-ring relative rounded-full px-4 py-2 text-[13px] transition-colors duration-400 ${
-                    active ? "text-ink" : "text-ink-muted hover:text-ink"
+                  className={`focus-ring relative px-3 py-1.5 text-[12px] font-semibold uppercase tracking-[0.14em] transition-colors duration-300 ${
+                    active ? "text-ink" : "text-ink-faint hover:text-ink"
                   }`}
                 >
+                  {item.label}
                   {active && (
                     <span
-                      className="absolute inset-0 rounded-full bg-white/[0.06]"
+                      className="absolute inset-x-3 -bottom-[3px] h-[2px] bg-lip"
                       aria-hidden
                     />
                   )}
-                  <span className="relative">{item.label}</span>
                 </Link>
               );
             })}
@@ -87,21 +84,19 @@ export function Header({ user, unread }: { user: HeaderUser | null; unread: numb
               <>
                 <Link
                   href="/notifications"
-                  className="focus-ring relative grid h-10 w-10 place-items-center rounded-full text-ink-muted transition-colors duration-400 hover:bg-white/[0.06] hover:text-ink"
+                  className="focus-ring relative grid h-10 w-10 place-items-center text-ink-muted transition-colors duration-300 hover:text-ink"
                   aria-label={`Notificaciones${unread > 0 ? ` (${unread} sin leer)` : ""}`}
                 >
                   <IconBell width={18} height={18} />
                   {unread > 0 && (
-                    <span className="absolute right-2 top-2 h-[7px] w-[7px] rounded-full bg-aurum ring-[3px] ring-obsidian" />
+                    <span className="absolute right-2 top-2 h-[7px] w-[7px] rounded-full bg-lip ring-[3px] ring-noir" aria-hidden />
                   )}
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="focus-ring hidden items-center gap-2.5 rounded-full border border-white/[0.08] bg-white/[0.04] py-2 pl-2.5 pr-4 text-[13px] text-ink transition-all duration-400 hover:border-aurum/35 sm:flex"
+                  className="focus-ring hidden items-center gap-2 border-b border-transparent py-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-ink transition-colors duration-300 hover:border-lip sm:flex"
                 >
-                  <span className="grid h-6 w-6 place-items-center rounded-full bg-aurum/15 text-aurum">
-                    <IconUser width={13} height={13} />
-                  </span>
+                  <IconUser width={14} height={14} className="text-lip" />
                   <span className="max-w-[110px] truncate">
                     {user.displayName || user.email.split("@")[0]}
                   </span>
@@ -123,7 +118,7 @@ export function Header({ user, unread }: { user: HeaderUser | null; unread: numb
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
-              className="focus-ring relative grid h-10 w-10 place-items-center rounded-full text-ink transition-colors duration-400 hover:bg-white/[0.06] lg:hidden"
+              className="focus-ring relative grid h-10 w-10 place-items-center text-ink transition-colors duration-300 lg:hidden"
               aria-label={open ? "Cerrar menú" : "Abrir menú"}
               aria-expanded={open}
             >
@@ -147,7 +142,7 @@ export function Header({ user, unread }: { user: HeaderUser | null; unread: numb
 
       {/* Overlay a pantalla completa con revelado escalonado */}
       <div
-        className={`fixed inset-0 z-30 bg-obsidian/92 backdrop-blur-3xl transition-opacity duration-500 ease-[cubic-bezier(.32,.72,0,1)] lg:hidden ${
+        className={`fixed inset-0 z-30 bg-noir transition-opacity duration-400 ease-[cubic-bezier(.22,1,.36,1)] lg:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
@@ -161,24 +156,24 @@ export function Header({ user, unread }: { user: HeaderUser | null; unread: numb
               key={item.href}
               href={item.href}
               tabIndex={open ? 0 : -1}
-              className={`font-display border-b border-white/[0.06] py-5 text-4xl text-ink transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)] ${
+              className={`font-display border-b border-line-soft py-5 text-[2.75rem] leading-none text-ink transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
                 open ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
               }`}
-              style={{ transitionDelay: open ? `${120 + index * 60}ms` : "0ms" }}
+              style={{ transitionDelay: open ? `${80 + index * 50}ms` : "0ms" }}
             >
               {item.label}
             </Link>
           ))}
 
           <div
-            className={`mt-10 flex flex-col gap-3 transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)] ${
+            className={`mt-10 flex flex-col gap-3 transition-all duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
               open ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
             }`}
-            style={{ transitionDelay: open ? "380ms" : "0ms" }}
+            style={{ transitionDelay: open ? "300ms" : "0ms" }}
           >
             {user ? (
               <>
-                <ButtonLink href="/dashboard" size="lg" full icon tabIndex={open ? 0 : -1}>
+                <ButtonLink href="/dashboard" size="lg" full tabIndex={open ? 0 : -1}>
                   Mi cuenta
                 </ButtonLink>
                 <ButtonLink
@@ -213,7 +208,7 @@ export function Header({ user, unread }: { user: HeaderUser | null; unread: numb
               </>
             ) : (
               <>
-                <ButtonLink href="/register" size="lg" full icon tabIndex={open ? 0 : -1}>
+                <ButtonLink href="/register" size="lg" full tabIndex={open ? 0 : -1}>
                   Crear cuenta
                 </ButtonLink>
                 <ButtonLink

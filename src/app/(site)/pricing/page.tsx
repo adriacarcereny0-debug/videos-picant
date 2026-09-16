@@ -27,14 +27,13 @@ export default async function PricingPage() {
 
   return (
     <div className="mx-auto max-w-[1280px] px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="eyebrow mb-4">Suscripciones</p>
-        <h1 className="display-lg text-ink">Elige cómo quieres acceder</h1>
-        <p className="mt-5 text-[16px] leading-relaxed text-ink-muted">
-          Dos planes mensuales con una diferencia clara: el Básico abre el contenido Básico, el
-          Premium abre absolutamente todo el catálogo.
+      <header className="border-b border-line pb-10">
+        <p className="eyebrow mb-5">Suscripciones</p>
+        <h1 className="display-lg max-w-[14ch] text-ink">Elige cómo quieres acceder</h1>
+        <p className="mt-6 max-w-[52ch] text-[15px] leading-[1.75] text-ink-muted">
+          El plan Básico abre el contenido Básico. El Premium abre todo el catálogo.
         </p>
-      </div>
+      </header>
 
       <div className="mt-14">
         <PlanGrid currentPlan={user?.plan ?? "FREE"} authenticated={Boolean(user)} />
@@ -42,8 +41,8 @@ export default async function PricingPage() {
 
       {/* Tabla comparativa */}
       <section className="mt-20">
-        <h2 className="display-md mb-8 text-center text-ink">Comparativa</h2>
-        <div className="surface overflow-hidden !p-0">
+        <h2 className="display-md mb-8 text-ink">Comparativa</h2>
+        <div className="overflow-hidden border border-line">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-line">
@@ -53,7 +52,7 @@ export default async function PricingPage() {
                 <th className="w-24 px-3 py-4 text-center text-[11px] font-bold uppercase tracking-[0.16em] text-silver sm:w-36">
                   Básico
                 </th>
-                <th className="w-24 px-3 py-4 text-center text-[11px] font-bold uppercase tracking-[0.16em] text-aurum sm:w-36">
+                <th className="w-24 px-3 py-4 text-center text-[11px] font-bold uppercase tracking-[0.16em] text-lip sm:w-36">
                   Premium
                 </th>
               </tr>
@@ -71,7 +70,7 @@ export default async function PricingPage() {
                   </td>
                   <td className="px-3 py-4 text-center">
                     {row.premium ? (
-                      <IconCheck className="mx-auto text-aurum" width={18} height={18} />
+                      <IconCheck className="mx-auto text-lip" width={18} height={18} />
                     ) : (
                       <IconClose className="mx-auto text-ink-faint/50" width={16} height={16} />
                     )}
@@ -83,7 +82,7 @@ export default async function PricingPage() {
                 <td className="px-3 py-5 text-center font-display text-lg font-bold text-ink">
                   9,99 €
                 </td>
-                <td className="px-3 py-5 text-center font-display text-lg font-bold text-aurum">
+                <td className="px-3 py-5 text-center font-display text-lg font-bold text-lip">
                   19,99 €
                 </td>
               </tr>

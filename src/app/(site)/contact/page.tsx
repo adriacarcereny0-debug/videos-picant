@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Contacto",
-  description: "Ponte en contacto con el equipo de Noctra.",
+  description: "Ponte en contacto con el equipo de Madrastras.",
   alternates: { canonical: "/contact" },
 };
 
@@ -37,7 +37,7 @@ export default async function ContactPage() {
             </h2>
             <p className="text-[14px] leading-relaxed text-ink-muted">
               Si quieres denunciar un contenido concreto, utiliza el{" "}
-              <Link href="/report" className="text-aurum underline underline-offset-2">
+              <Link href="/report" className="text-lip underline underline-offset-2">
                 formulario de reporte
               </Link>
               . Las solicitudes de retirada por publicación sin autorización se tramitan con
@@ -49,7 +49,7 @@ export default async function ContactPage() {
             <h2 className="font-display mb-2 text-base font-bold text-ink">Facturación</h2>
             <p className="text-[14px] leading-relaxed text-ink-muted">
               Las facturas y el método de pago se gestionan desde el portal de Stripe, accesible
-              en <Link href="/subscription" className="text-aurum">Mi suscripción</Link>.
+              en <Link href="/subscription" className="text-lip">Mi suscripción</Link>.
             </p>
           </div>
         </aside>

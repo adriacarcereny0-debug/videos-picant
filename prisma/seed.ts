@@ -16,8 +16,8 @@ import { PrismaClient, type SubscriptionLevel } from "@prisma/client";
 const prisma = new PrismaClient();
 const STORAGE_ROOT = path.join(process.cwd(), "storage");
 
-const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? "admin@noctra.example";
-const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? "Noctra2026Admin";
+const ADMIN_EMAIL = process.env.SEED_ADMIN_EMAIL ?? "admin@madrastras.example";
+const ADMIN_PASSWORD = process.env.SEED_ADMIN_PASSWORD ?? "Madrastras2026Admin";
 const DEMO_PASSWORD = "Demo2026Cuenta";
 /** Ruta opcional a un MP4 real para poder reproducir en la demo. */
 const DEMO_VIDEO_PATH = process.env.SEED_VIDEO_PATH ?? "";
@@ -39,10 +39,8 @@ const PALETTES = [
  * portada a pantalla completa. En producción lo sustituyen las miniaturas
  * reales que suba el administrador.
  */
-function thumbnailSvg(index: number, title: string): string {
+function thumbnailSvg(index: number): string {
   const [deep, mid, light, shadow] = PALETTES[index % PALETTES.length];
-  const number = String(index + 1).padStart(2, "0");
-  const safeTitle = title.replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const beamX = 340 + (index % 4) * 190;
   const horizon = 560 + (index % 3) * 70;
 
@@ -95,10 +93,6 @@ function thumbnailSvg(index: number, title: string): string {
   <rect width="1600" height="900" fill="url(#vignette)"/>
   <rect width="1600" height="900" filter="url(#grain)" opacity="0.06"/>
 
-  <text x="86" y="768" font-family="Georgia,'Times New Roman',serif" font-size="150" font-style="italic"
-        fill="${light}" opacity="0.34" letter-spacing="-5">${number}</text>
-  <text x="92" y="826" font-family="Helvetica,Arial,sans-serif" font-size="25"
-        fill="#ffffff" opacity="0.7" letter-spacing="0.5">${safeTitle}</text>
 </svg>`;
 }
 
@@ -110,7 +104,7 @@ const CATALOG: {
   duration: number;
 }[] = [
   {
-    title: "Primera sesión — Luz tenue",
+    title: "Luz tenue",
     description:
       "Apertura del catálogo. Una sesión íntima grabada en plano fijo, con iluminación cálida y sin cortes.",
     category: "Sesiones",
@@ -134,7 +128,7 @@ const CATALOG: {
     duration: 468,
   },
   {
-    title: "Sin editar — Cinta 12",
+    title: "Cinta 12, sin editar",
     description:
       "Material íntegro sin montaje, tal y como se grabó. Exclusivo para suscriptores Premium.",
     category: "Sin editar",
@@ -165,7 +159,7 @@ const CATALOG: {
     duration: 934,
   },
   {
-    title: "Archivo — Selección 01",
+    title: "Archivo, selección uno",
     description:
       "Recopilación de material de archivo restaurado y remasterizado. Solo Premium.",
     category: "Archivo",
@@ -205,9 +199,9 @@ async function main() {
   const periodEnd = new Date(now.getTime() + 22 * 24 * 60 * 60 * 1000);
 
   const demoUsers = [
-    { email: "free@noctra.example", name: "Cuenta Free", plan: "FREE" as const, price: 0 },
-    { email: "basic@noctra.example", name: "Cuenta Básico", plan: "BASIC" as const, price: 999 },
-    { email: "premium@noctra.example", name: "Cuenta Premium", plan: "PREMIUM" as const, price: 1999 },
+    { email: "free@madrastras.example", name: "Cuenta Free", plan: "FREE" as const, price: 0 },
+    { email: "basic@madrastras.example", name: "Cuenta Básico", plan: "BASIC" as const, price: 999 },
+    { email: "premium@madrastras.example", name: "Cuenta Premium", plan: "PREMIUM" as const, price: 1999 },
   ];
 
   for (const demo of demoUsers) {
@@ -237,7 +231,7 @@ async function main() {
 
   // Usuarios de relleno para las estadísticas del panel.
   for (let i = 1; i <= 24; i += 1) {
-    const email = `usuario${String(i).padStart(2, "0")}@noctra.example`;
+    const email = `usuario${String(i).padStart(2, "0")}@madrastras.example`;
     const createdAt = new Date(now.getTime() - i * 26 * 60 * 60 * 1000);
     const plan = i % 5 === 0 ? "PREMIUM" : i % 3 === 0 ? "BASIC" : "FREE";
 
@@ -336,7 +330,7 @@ async function main() {
     });
 
     const thumbnailKey = `thumbnails/${video.id}/thumbnail.svg`;
-    await writeObject(thumbnailKey, Buffer.from(thumbnailSvg(index, item.title), "utf8"));
+    await writeObject(thumbnailKey, Buffer.from(thumbnailSvg(index), "utf8"));
 
     const videoKey = `videos/${video.id}/video.mp4`;
     if (demoVideoBuffer) await writeObject(videoKey, demoVideoBuffer);
@@ -349,7 +343,7 @@ async function main() {
 
   // ---------------------- Notificaciones y reportes -----------------------
   const premiumUser = await prisma.user.findUnique({
-    where: { email: "premium@noctra.example" },
+    where: { email: "premium@madrastras.example" },
   });
 
   if (premiumUser) {
@@ -360,7 +354,7 @@ async function main() {
           {
             userId: premiumUser.id,
             type: "WELCOME",
-            title: "Bienvenido a Noctra",
+            title: "Bienvenido a Madrastras",
             message: "Tu cuenta de demostración está lista.",
             link: "/videos",
           },
@@ -403,8 +397,8 @@ async function main() {
     create: {
       key: "site",
       value: {
-        siteName: "Noctra",
-        supportEmail: "soporte@noctra.example",
+        siteName: "Madrastras",
+        supportEmail: "soporte@madrastras.example",
         heroHeadline: "Contenido privado que solo verá quien tenga acceso.",
         announcement: "",
         signedUrlTtlSeconds: 900,
@@ -414,9 +408,9 @@ async function main() {
 
   console.log(`✓ Listo.
   Admin:    ${admin.email} / ${ADMIN_PASSWORD}
-  Free:     free@noctra.example / ${DEMO_PASSWORD}
-  Básico:   basic@noctra.example / ${DEMO_PASSWORD}
-  Premium:  premium@noctra.example / ${DEMO_PASSWORD}`);
+  Free:     free@madrastras.example / ${DEMO_PASSWORD}
+  Básico:   basic@madrastras.example / ${DEMO_PASSWORD}
+  Premium:  premium@madrastras.example / ${DEMO_PASSWORD}`);
 }
 
 main()

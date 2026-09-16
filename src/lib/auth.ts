@@ -8,8 +8,8 @@ import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
 import { hashToken, randomToken, requestContext } from "@/lib/security";
 
-export const SESSION_COOKIE = "noctra_session";
-export const AGE_COOKIE = "noctra_age_ok";
+export const SESSION_COOKIE = "madrastras_session";
+export const AGE_COOKIE = "madrastras_age_ok";
 
 const BCRYPT_ROUNDS = 12;
 

@@ -33,7 +33,6 @@ export default async function DashboardPage({
     }),
   ]);
 
-  const recommended = latest.filter((v) => v.unlocked).slice(0, 3);
   const recent = latest.slice(0, 3);
   const subscription = user.subscription;
   const planName =
@@ -51,8 +50,8 @@ export default async function DashboardPage({
       </header>
 
       {justSubscribed && (
-        <div className="surface flex items-center gap-4 border-aurum/30 px-6 py-5">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-aurum/15 text-aurum">
+        <div className="surface flex items-center gap-4 border-lip/30 px-6 py-5">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-lip/15 text-lip">
             <IconSparkle />
           </span>
           <div>
@@ -143,7 +142,7 @@ export default async function DashboardPage({
           <h2 className="display-md text-ink">Últimos vídeos</h2>
           <Link
             href="/videos"
-            className="focus-ring group inline-flex items-center gap-2 text-[13px] font-semibold text-aurum"
+            className="focus-ring group inline-flex items-center gap-2 text-[13px] font-semibold text-lip"
           >
             Ver todo
             <IconArrowRight
@@ -166,23 +165,11 @@ export default async function DashboardPage({
         )}
       </section>
 
-      {/* Recomendados */}
-      {recommended.length > 0 && (
-        <section>
-          <h2 className="display-md mb-5 text-ink">Recomendados para ti</h2>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {recommended.map((video) => (
-              <VideoCard key={video.id} video={video} />
-            ))}
-          </div>
-        </section>
-      )}
-
       {/* Notificaciones recientes */}
       <section>
         <div className="mb-5 flex items-end justify-between gap-4">
           <h2 className="display-md text-ink">Notificaciones</h2>
-          <Link href="/notifications" className="text-[13px] font-semibold text-aurum">
+          <Link href="/notifications" className="text-[13px] font-semibold text-lip">
             Ver todas
           </Link>
         </div>
@@ -193,7 +180,7 @@ export default async function DashboardPage({
               <li key={item.id} className="flex gap-4 px-6 py-4">
                 <span
                   className={`mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full ${
-                    item.readAt ? "bg-white/5 text-ink-faint" : "bg-aurum/15 text-aurum"
+                    item.readAt ? "bg-white/5 text-ink-faint" : "bg-lip/15 text-lip"
                   }`}
                 >
                   <IconBell width={15} height={15} />

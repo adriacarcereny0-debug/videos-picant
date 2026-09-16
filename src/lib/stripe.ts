@@ -16,7 +16,7 @@ export function stripe(): Stripe | null {
   if (!client) {
     client = new Stripe(env.stripeSecretKey, {
       apiVersion: "2025-02-24.acacia",
-      appInfo: { name: "Noctra", version: "1.0.0" },
+      appInfo: { name: "Madrastras", version: "1.0.0" },
     });
   }
   return client;

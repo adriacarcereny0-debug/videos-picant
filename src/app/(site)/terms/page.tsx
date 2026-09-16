@@ -3,7 +3,7 @@ import { LegalLayout, LegalSection } from "@/components/LegalLayout";
 
 export const metadata: Metadata = {
   title: "Términos y condiciones",
-  description: "Condiciones de uso del servicio de suscripción de Noctra.",
+  description: "Condiciones de uso del servicio de suscripción de Madrastras.",
   alternates: { canonical: "/terms" },
 };
 
@@ -12,11 +12,11 @@ export default function TermsPage() {
     <LegalLayout
       title="Términos y condiciones"
       updatedAt="15 de septiembre de 2026"
-      intro="Estas condiciones regulan el acceso y el uso de Noctra, una plataforma privada de vídeo bajo suscripción destinada exclusivamente a personas mayores de 18 años."
+      intro="Estas condiciones regulan el acceso y el uso de Madrastras, una plataforma privada de vídeo bajo suscripción destinada exclusivamente a personas mayores de 18 años."
     >
       <LegalSection title="1. Objeto del servicio">
         <p>
-          Noctra ofrece acceso a un catálogo privado de contenido audiovisual mediante
+          Madrastras ofrece acceso a un catálogo privado de contenido audiovisual mediante
           suscripciones mensuales de pago. El acceso a cada pieza depende del nivel del plan
           contratado: <strong>Básico</strong> o <strong>Premium</strong>.
         </p>

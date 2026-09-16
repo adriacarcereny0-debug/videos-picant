@@ -81,7 +81,7 @@ export default async function AdminUsersPage({
             defaultValue={search ?? ""}
             placeholder="Buscar por correo o nombre"
             aria-label="Buscar usuarios"
-            className="w-full rounded-full border border-line bg-[#0d0d11] py-2.5 pl-10 pr-4 text-[13px] text-ink placeholder:text-ink-faint focus:border-aurum/50 focus:outline-none"
+            className="w-full rounded-full border border-line bg-[#0d0d11] py-2.5 pl-10 pr-4 text-[13px] text-ink placeholder:text-ink-faint focus:border-lip/50 focus:outline-none"
           />
           {plan && <input type="hidden" name="plan" value={plan} />}
         </form>
@@ -99,7 +99,7 @@ export default async function AdminUsersPage({
               href={`/admin/users${query.toString() ? `?${query}` : ""}`}
               className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[12.5px] font-semibold transition-all ${
                 active
-                  ? "border-aurum/50 bg-aurum/12 text-aurum-soft"
+                  ? "border-lip/50 bg-lip/12 text-lip-soft"
                   : "border-line text-ink-muted hover:text-ink"
               }`}
             >

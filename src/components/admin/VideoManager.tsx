@@ -178,7 +178,7 @@ export function VideoManager({
               onClick={() => setFilter(item.key)}
               className={`focus-ring shrink-0 rounded-full border px-3.5 py-1.5 text-[12.5px] font-semibold transition-all ${
                 filter === item.key
-                  ? "border-aurum/50 bg-aurum/12 text-aurum-soft"
+                  ? "border-lip/50 bg-lip/12 text-lip-soft"
                   : "border-line text-ink-muted hover:text-ink"
               }`}
             >
@@ -198,7 +198,7 @@ export function VideoManager({
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Buscar vídeos"
               aria-label="Buscar vídeos"
-              className="w-full rounded-full border border-line bg-[#0d0d11] py-2.5 pl-10 pr-4 text-[13px] text-ink placeholder:text-ink-faint focus:border-aurum/50 focus:outline-none"
+              className="w-full rounded-full border border-line bg-[#0d0d11] py-2.5 pl-10 pr-4 text-[13px] text-ink placeholder:text-ink-faint focus:border-lip/50 focus:outline-none"
             />
           </div>
           <Button size="sm" onClick={() => setEditor({ mode: "create" })} className="shrink-0">
@@ -227,7 +227,7 @@ export function VideoManager({
                 <tr key={video.id} className="border-b border-line-soft last:border-0">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3.5">
-                      <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg bg-elevated">
+                      <div className="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg bg-raised">
                         {video.thumbnailUrl && (
                           <Image
                             src={video.thumbnailUrl}
@@ -243,12 +243,12 @@ export function VideoManager({
                         <div className="flex items-center gap-2">
                           <Link
                             href={`/videos/${video.id}`}
-                            className="block max-w-[240px] truncate font-medium text-ink hover:text-aurum"
+                            className="block max-w-[240px] truncate font-medium text-ink hover:text-lip"
                           >
                             {video.title}
                           </Link>
                           {video.featured && (
-                            <span className="shrink-0 text-aurum" title="Portada">
+                            <span className="shrink-0 text-lip" title="Portada">
                               <IconStar width={13} height={13} filled />
                             </span>
                           )}
@@ -305,7 +305,7 @@ export function VideoManager({
                           })
                         }
                         disabled={busyId === video.id}
-                        className="focus-ring rounded-full border border-line px-3 py-1.5 text-[11px] font-semibold text-ink-muted transition-colors hover:border-aurum/40 hover:text-ink disabled:opacity-40"
+                        className="focus-ring rounded-full border border-line px-3 py-1.5 text-[11px] font-semibold text-ink-muted transition-colors hover:border-lip/40 hover:text-ink disabled:opacity-40"
                       >
                         {video.status === "PUBLISHED" ? "Despublicar" : "Publicar"}
                       </button>
@@ -381,10 +381,10 @@ function IconButton({
       title={label}
       className={`focus-ring grid h-8 w-8 place-items-center rounded-lg border text-[12px] transition-colors disabled:opacity-40 ${
         active
-          ? "border-aurum/45 bg-aurum/12 text-aurum"
+          ? "border-lip/45 bg-lip/12 text-lip"
           : danger
             ? "border-line text-ink-faint hover:border-danger/40 hover:text-danger"
-            : "border-line text-ink-muted hover:border-aurum/40 hover:text-ink"
+            : "border-line text-ink-muted hover:border-lip/40 hover:text-ink"
       }`}
     >
       {children}
@@ -500,7 +500,7 @@ function VideoEditor({
 
   return (
     <div
-      className="fade-in fixed inset-0 z-[60] overflow-y-auto bg-obsidian/85 p-4 backdrop-blur-sm"
+      className="fade-in fixed inset-0 z-[60] overflow-y-auto bg-noir/85 p-4 backdrop-blur-sm"
       role="dialog"
       aria-modal="true"
       aria-label={mode === "create" ? "Subir vídeo" : "Editar vídeo"}
@@ -645,10 +645,10 @@ function VideoEditor({
               type="checkbox"
               name="featured"
               defaultChecked={video?.featured ?? false}
-              className="mt-0.5 h-4 w-4 shrink-0 rounded border-line bg-elevated accent-[#c8a063]"
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-line bg-raised accent-[#c8a063]"
             />
             <span className="text-[13px] leading-relaxed text-ink-muted">
-              <strong className="font-semibold text-ink">Usar como portada</strong> — su imagen
+              <strong className="font-semibold text-ink">Usar como portada</strong>. Su imagen
               aparecerá en la cabecera de la página de inicio. Si marcas varios, la portada irá
               rotando entre ellos.
             </span>
@@ -671,7 +671,7 @@ function VideoEditor({
               type="file"
               accept="image/jpeg,image/png,image/webp,image/avif"
               required={mode === "create"}
-              className="w-full rounded-xl border border-line bg-[#0d0d11] px-4 py-3 text-[13px] text-ink-muted file:mr-4 file:rounded-full file:border-0 file:bg-aurum file:px-4 file:py-1.5 file:text-[12px] file:font-bold file:text-obsidian"
+              className="w-full rounded-xl border border-line bg-[#0d0d11] px-4 py-3 text-[13px] text-ink-muted file:mr-4 file:rounded-full file:border-0 file:bg-lip file:px-4 file:py-1.5 file:text-[12px] file:font-bold file:text-noir"
             />
           </Field>
 
@@ -687,16 +687,16 @@ function VideoEditor({
                 type="file"
                 accept="video/mp4,video/webm,video/quicktime"
                 required
-                className="w-full rounded-xl border border-line bg-[#0d0d11] px-4 py-3 text-[13px] text-ink-muted file:mr-4 file:rounded-full file:border-0 file:bg-aurum file:px-4 file:py-1.5 file:text-[12px] file:font-bold file:text-obsidian"
+                className="w-full rounded-xl border border-line bg-[#0d0d11] px-4 py-3 text-[13px] text-ink-muted file:mr-4 file:rounded-full file:border-0 file:bg-lip file:px-4 file:py-1.5 file:text-[12px] file:font-bold file:text-noir"
               />
             </Field>
           )}
 
           {saving && (
             <div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-elevated">
+              <div className="h-1.5 overflow-hidden rounded-full bg-raised">
                 <div
-                  className="h-full rounded-full bg-aurum transition-all duration-300"
+                  className="h-full rounded-full bg-lip transition-all duration-300"
                   style={{ width: `${Math.max(progress, 3)}%` }}
                 />
               </div>

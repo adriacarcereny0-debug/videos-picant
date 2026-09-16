@@ -54,20 +54,20 @@ export default async function AdminDashboardPage() {
           value={formatMoney(stats.monthlyRevenueCents)}
           hint={`Total histórico: ${formatMoney(stats.totalRevenueCents)}`}
           icon={<IconChart width={16} height={16} />}
-          accent="aurum"
+          accent="lip"
         />
         <StatCard
           label="Ingreso recurrente"
           value={formatMoney(stats.mrrCents)}
           hint="MRR según suscripciones vivas"
           icon={<IconChart width={16} height={16} />}
-          accent="aurum"
+          accent="lip"
         />
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Suscriptores Básico" value={stats.basic} accent="silver" />
-        <StatCard label="Suscriptores Premium" value={stats.premium} accent="aurum" />
+        <StatCard label="Suscriptores Premium" value={stats.premium} accent="lip" />
         <StatCard
           label="Vídeos"
           value={stats.videos}
@@ -78,7 +78,7 @@ export default async function AdminDashboardPage() {
           label="Reportes pendientes"
           value={stats.pendingReports}
           icon={<IconFlag width={16} height={16} />}
-          accent={stats.pendingReports > 0 ? "aurum" : "neutral"}
+          accent={stats.pendingReports > 0 ? "lip" : "neutral"}
         />
       </section>
 
@@ -88,7 +88,7 @@ export default async function AdminDashboardPage() {
           title="Nuevas suscripciones · 30 días"
           value={String(series.newSubscriptions.reduce((sum, p) => sum + p.value, 0))}
         >
-          <AreaChart points={series.newSubscriptions} accent="#c8a063" />
+          <AreaChart points={series.newSubscriptions} accent="#e0344f" />
         </ChartCard>
 
         <ChartCard
@@ -99,7 +99,7 @@ export default async function AdminDashboardPage() {
         >
           <AreaChart
             points={series.revenue}
-            accent="#4fbf8b"
+            accent="#efe9df"
             format={(n) => formatMoney(Math.round(n * 100))}
           />
         </ChartCard>
@@ -108,14 +108,14 @@ export default async function AdminDashboardPage() {
           title="Usuarios nuevos · 30 días"
           value={String(series.newUsers.reduce((sum, p) => sum + p.value, 0))}
         >
-          <BarChart points={series.newUsers} accent="#aab4c4" />
+          <BarChart points={series.newUsers} accent="#94a1b5" />
         </ChartCard>
 
         <ChartCard
           title="Cancelaciones · 30 días"
           value={String(series.cancellations.reduce((sum, p) => sum + p.value, 0))}
         >
-          <BarChart points={series.cancellations} accent="#d96a6a" />
+          <BarChart points={series.cancellations} accent="#7c5a63" />
         </ChartCard>
       </section>
 
@@ -126,7 +126,7 @@ export default async function AdminDashboardPage() {
             <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-ink-faint">
               Últimos registros
             </h2>
-            <Link href="/admin/users" className="text-[12px] font-semibold text-aurum">
+            <Link href="/admin/users" className="text-[12px] font-semibold text-lip">
               Ver todos
             </Link>
           </div>
@@ -165,7 +165,7 @@ export default async function AdminDashboardPage() {
             <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-ink-faint">
               Últimos vídeos
             </h2>
-            <Link href="/admin/videos" className="text-[12px] font-semibold text-aurum">
+            <Link href="/admin/videos" className="text-[12px] font-semibold text-lip">
               Gestionar
             </Link>
           </div>

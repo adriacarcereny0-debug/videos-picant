@@ -48,7 +48,7 @@ function resolveAppUrl(): string {
 
 export const env = {
   appUrl: resolveAppUrl(),
-  appName: process.env.APP_NAME?.trim() || "Noctra",
+  appName: process.env.APP_NAME?.trim() || "Madrastras",
   nodeEnv: process.env.NODE_ENV ?? "development",
   isProduction: process.env.NODE_ENV === "production",
 
@@ -81,7 +81,7 @@ export const env = {
   smtpPort: Number(process.env.SMTP_PORT ?? 587),
   smtpUser: process.env.SMTP_USER ?? "",
   smtpPassword: process.env.SMTP_PASSWORD ?? "",
-  mailFrom: process.env.MAIL_FROM ?? "Noctra <no-reply@noctra.example>",
+  mailFrom: process.env.MAIL_FROM ?? "Madrastras <no-reply@madrastras.example>",
 
   // Demo
   demoMode: process.env.DEMO_MODE !== "false",

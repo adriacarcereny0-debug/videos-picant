@@ -32,7 +32,7 @@ function path(points: Point[], width: number, height: number, smooth = true): st
 /** Gráfico de área: evolución temporal. */
 export function AreaChart({
   points,
-  accent = "#c8a063",
+  accent = "#e0344f",
   height = 180,
   format = (n: number) => String(n),
 }: {
@@ -74,7 +74,7 @@ export function AreaChart({
             x2={width}
             y1={height * ratio}
             y2={height * ratio}
-            stroke="#232329"
+            stroke="oklch(0.31 0.02 20)"
             strokeWidth="1"
           />
         ))}
@@ -106,7 +106,7 @@ export function AreaChart({
 /** Gráfico de barras: comparativa por periodo. */
 export function BarChart({
   points,
-  accent = "#aab4c4",
+  accent = "#94a1b5",
   height = 180,
 }: {
   points: Point[];

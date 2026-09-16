@@ -6,7 +6,7 @@ import { getCurrentUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Iniciar sesión",
-  description: "Accede a tu cuenta de Noctra.",
+  description: "Accede a tu cuenta de Madrastras.",
   robots: { index: false, follow: false },
 };
 

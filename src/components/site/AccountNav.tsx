@@ -33,16 +33,16 @@ export function AccountSidebar({ unread }: { unread: number }) {
             <li key={item.href}>
               <Link
                 href={item.href}
-                className={`focus-ring flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-medium transition-all duration-300 ${
+                className={`focus-ring flex items-center gap-3 border-l-2 py-2.5 pl-4 text-[13px] font-medium transition-colors duration-300 ${
                   active
-                    ? "bg-white/[0.06] text-ink"
-                    : "text-ink-muted hover:bg-white/[0.03] hover:text-ink"
+                    ? "border-lip text-ink"
+                    : "border-transparent text-ink-muted hover:text-ink"
                 }`}
               >
-                <span className={active ? "text-aurum" : "text-ink-faint"}>{item.icon}</span>
+                <span className={active ? "text-lip" : "text-ink-faint"}>{item.icon}</span>
                 {item.label}
                 {item.href === "/notifications" && unread > 0 && (
-                  <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-aurum px-1.5 text-[10px] font-bold text-obsidian">
+                  <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-[2px] bg-lip px-1.5 text-[10px] font-bold text-ink">
                     {unread > 9 ? "9+" : unread}
                   </span>
                 )}
@@ -57,7 +57,7 @@ export function AccountSidebar({ unread }: { unread: number }) {
       <form action="/api/auth/logout" method="post">
         <button
           type="submit"
-          className="focus-ring flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-[14px] font-medium text-ink-muted transition-colors hover:bg-danger/10 hover:text-danger"
+          className="focus-ring flex w-full items-center gap-3 border-l-2 border-transparent py-2.5 pl-4 text-[13px] font-medium text-ink-muted transition-colors duration-300 hover:text-danger"
         >
           <span className="text-ink-faint">
             <IconLogout />
@@ -75,7 +75,7 @@ export function AccountTabBar({ unread }: { unread: number }) {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-obsidian/95 backdrop-blur-xl lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-noir/95 backdrop-blur-xl lg:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
       aria-label="Navegación de cuenta"
     >
@@ -87,13 +87,13 @@ export function AccountTabBar({ unread }: { unread: number }) {
               <Link
                 href={item.href}
                 className={`relative flex flex-col items-center gap-1 py-2.5 text-[10px] font-semibold transition-colors ${
-                  active ? "text-aurum" : "text-ink-faint"
+                  active ? "text-lip" : "text-ink-faint"
                 }`}
               >
                 <span className="relative">
                   {item.icon}
                   {item.href === "/notifications" && unread > 0 && (
-                    <span className="absolute -right-1.5 -top-1 h-2 w-2 rounded-full bg-aurum" />
+                    <span className="absolute -right-1.5 -top-1 h-2 w-2 rounded-full bg-lip" />
                   )}
                 </span>
                 {item.label.split(" ")[0]}

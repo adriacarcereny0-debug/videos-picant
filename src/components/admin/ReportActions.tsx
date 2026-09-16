@@ -38,7 +38,7 @@ export function ReportActions({ reportId, status }: { reportId: string; status: 
           type="button"
           onClick={() => update(action.value)}
           disabled={busy}
-          className="focus-ring rounded-full border border-line px-3 py-1.5 text-[11px] font-semibold text-ink-muted transition-colors hover:border-aurum/40 hover:text-ink disabled:opacity-40"
+          className="focus-ring rounded-full border border-line px-3 py-1.5 text-[11px] font-semibold text-ink-muted transition-colors hover:border-lip/40 hover:text-ink disabled:opacity-40"
         >
           {action.label}
         </button>

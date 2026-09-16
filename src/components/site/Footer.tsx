@@ -1,82 +1,71 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 
-const COLUMNS = [
-  {
-    title: "Plataforma",
-    links: [
-      { href: "/videos", label: "Catálogo" },
-      { href: "/pricing", label: "Suscripciones" },
-      { href: "/faq", label: "Preguntas frecuentes" },
-      { href: "/contact", label: "Contacto" },
-    ],
-  },
-  {
-    title: "Cuenta",
-    links: [
-      { href: "/login", label: "Iniciar sesión" },
-      { href: "/register", label: "Crear cuenta" },
-      { href: "/subscription", label: "Mi suscripción" },
-      { href: "/forgot-password", label: "Recuperar contraseña" },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { href: "/terms", label: "Términos y condiciones" },
-      { href: "/privacy", label: "Política de privacidad" },
-      { href: "/cookies", label: "Política de cookies" },
-      { href: "/refunds", label: "Cancelación y reembolsos" },
-      { href: "/report", label: "Reportar contenido" },
-    ],
-  },
+/**
+ * Pie reducido a lo que de verdad se usa: navegación, cuenta y lo legal
+ * obligatorio. Cuatro columnas de enlaces eran un directorio, no un pie.
+ */
+const NAV = [
+  { href: "/videos", label: "Catálogo" },
+  { href: "/pricing", label: "Suscripciones" },
+  { href: "/subscription", label: "Mi suscripción" },
+  { href: "/contact", label: "Contacto" },
+];
+
+const LEGAL = [
+  { href: "/terms", label: "Términos" },
+  { href: "/privacy", label: "Privacidad" },
+  { href: "/cookies", label: "Cookies" },
+  { href: "/refunds", label: "Cancelación" },
+  { href: "/report", label: "Reportar contenido" },
 ];
 
 export function Footer() {
   return (
-    <footer className="mt-32 border-t border-white/[0.05] bg-[#07070a]">
-      <div className="mx-auto max-w-[1180px] px-4 py-24 sm:px-6 lg:px-8">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
-          <div className="max-w-xs">
+    <footer className="mt-32 border-t border-line-soft">
+      <div className="mx-auto max-w-[1180px] px-5 py-20 sm:px-8">
+        <div className="flex flex-col gap-12 md:flex-row md:items-start md:justify-between">
+          <div className="max-w-sm">
             <Logo />
-            <p className="mt-5 text-sm leading-relaxed text-ink-muted">
-              Catálogo privado de vídeo bajo suscripción. Acceso restringido, contenido exclusivo
-              y reproducción protegida mediante enlaces temporales.
-            </p>
-            <p className="mt-5 inline-flex items-center gap-2 rounded-full border border-line px-3 py-1.5 text-[11px] font-bold tracking-[0.14em] text-ink-faint">
-              <span className="h-1.5 w-1.5 rounded-full bg-danger" aria-hidden />
-              SOLO +18
+            <p className="mt-5 text-[14px] leading-[1.7] text-ink-muted">
+              Catálogo privado de vídeo bajo suscripción mensual. Acceso restringido y
+              reproducción protegida con enlaces que caducan.
             </p>
           </div>
 
-          {COLUMNS.map((column) => (
-            <div key={column.title}>
-              <h3 className="eyebrow mb-5">
-                {column.title}
-              </h3>
-              <ul className="space-y-2.5">
-                {column.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="focus-ring text-sm text-ink-muted transition-colors hover:text-ink"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <nav className="flex flex-wrap gap-x-10 gap-y-3" aria-label="Pie">
+            {NAV.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="focus-ring text-[14px] text-ink-muted transition-colors duration-300 hover:text-ink"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
         </div>
 
-        <div className="hairline my-14" />
+        <div className="hairline my-12" />
 
-        <div className="flex flex-col gap-4 text-xs text-ink-faint sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Noctra. Todos los derechos reservados.</p>
-          <p className="max-w-lg leading-relaxed">
-            Plataforma destinada exclusivamente a personas mayores de 18 años. Todo el contenido
-            se publica con el consentimiento de las personas que aparecen en él.
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            {LEGAL.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="focus-ring text-[12px] text-ink-faint transition-colors duration-300 hover:text-ink-muted"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </div>
+
+          <p className="flex items-center gap-3 text-[12px] text-ink-faint">
+            <span className="bg-lip px-1.5 py-0.5 font-display text-[11px] leading-none text-ink">
+              +18
+            </span>
+            © {new Date().getFullYear()} Madrastras
           </p>
         </div>
       </div>

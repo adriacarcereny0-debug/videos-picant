@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/pricing", "/faq", "/terms", "/privacy", "/cookies", "/refunds", "/contact"],
+        allow: ["/", "/pricing", "/terms", "/privacy", "/cookies", "/refunds", "/contact"],
         // Zonas privadas y contenido protegido: fuera de los buscadores.
         disallow: [
           "/videos",

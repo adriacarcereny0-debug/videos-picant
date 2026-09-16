@@ -65,7 +65,7 @@ export function NotificationList({ items }: { items: NotificationItem[] }) {
               <div className="flex gap-4">
                 <span
                   className={`mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full ${
-                    read ? "bg-white/5 text-ink-faint" : "bg-aurum/15 text-aurum"
+                    read ? "bg-white/5 text-ink-faint" : "bg-lip/15 text-lip"
                   }`}
                 >
                   <IconBell width={16} height={16} />
@@ -77,7 +77,7 @@ export function NotificationList({ items }: { items: NotificationItem[] }) {
                     >
                       {item.title}
                     </p>
-                    {!read && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-aurum" />}
+                    {!read && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-lip" />}
                   </div>
                   <p className="mt-1 text-[13.5px] leading-relaxed text-ink-muted">
                     {item.message}
@@ -93,7 +93,7 @@ export function NotificationList({ items }: { items: NotificationItem[] }) {
                           event.preventDefault();
                           void markOne(item.id);
                         }}
-                        className="focus-ring inline-flex items-center gap-1 text-[11px] font-semibold text-ink-faint hover:text-aurum"
+                        className="focus-ring inline-flex items-center gap-1 text-[11px] font-semibold text-ink-faint hover:text-lip"
                       >
                         <IconCheck width={13} height={13} />
                         Marcar como leída

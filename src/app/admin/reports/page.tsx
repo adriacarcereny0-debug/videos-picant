@@ -62,7 +62,7 @@ export default async function AdminReportsPage({
             href={item.key ? `/admin/reports?status=${item.key}` : "/admin/reports"}
             className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[12.5px] font-semibold transition-all ${
               status === item.key
-                ? "border-aurum/50 bg-aurum/12 text-aurum-soft"
+                ? "border-lip/50 bg-lip/12 text-lip-soft"
                 : "border-line text-ink-muted hover:text-ink"
             }`}
           >
@@ -91,7 +91,7 @@ export default async function AdminReportsPage({
                     {report.video ? (
                       <Link
                         href={`/videos/${report.video.id}`}
-                        className="font-medium text-ink hover:text-aurum"
+                        className="font-medium text-ink hover:text-lip"
                       >
                         {report.video.title}
                       </Link>

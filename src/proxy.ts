@@ -10,8 +10,8 @@ import { NextResponse, type NextRequest } from "next/server";
  * de conveniencia, nunca la fuente de verdad.
  */
 
-const AGE_COOKIE = "noctra_age_ok";
-const SESSION_COOKIE = "noctra_session";
+const AGE_COOKIE = "madrastras_age_ok";
+const SESSION_COOKIE = "madrastras_session";
 
 /** Rutas accesibles sin confirmar la edad. */
 const AGE_EXEMPT = [

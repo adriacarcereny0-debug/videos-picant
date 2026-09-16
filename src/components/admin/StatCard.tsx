@@ -11,11 +11,11 @@ export function StatCard({
   value: string | number;
   hint?: string;
   icon?: ReactNode;
-  accent?: "neutral" | "aurum" | "silver" | "positive";
+  accent?: "neutral" | "lip" | "silver" | "positive";
 }) {
   const accents = {
     neutral: "text-ink-faint bg-white/5",
-    aurum: "text-aurum bg-aurum/12",
+    lip: "text-lip bg-lip/12",
     silver: "text-silver bg-silver/10",
     positive: "text-positive bg-positive/10",
   };

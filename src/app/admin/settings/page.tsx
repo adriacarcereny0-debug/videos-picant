@@ -8,8 +8,8 @@ export const metadata = { title: "Ajustes" };
 export const dynamic = "force-dynamic";
 
 const DEFAULTS: SiteSettings = {
-  siteName: "Noctra",
-  supportEmail: "soporte@noctra.example",
+  siteName: "Madrastras",
+  supportEmail: "soporte@madrastras.example",
   heroHeadline: "Contenido privado que solo verá quien tenga acceso.",
   announcement: "",
   signedUrlTtlSeconds: 900,

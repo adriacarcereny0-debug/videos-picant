@@ -6,7 +6,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div className="grain relative grid min-h-dvh grid-cols-1 lg:grid-cols-[1fr_minmax(480px,44%)]">
       {/* Panel editorial (solo escritorio) */}
       <aside className="relative hidden overflow-hidden border-r border-line-soft bg-[#0a0a0c] lg:block">
-        <div className="aurum-glow" aria-hidden />
+        <div className="lip-glow" aria-hidden />
         <div className="relative z-10 flex h-full flex-col justify-between p-12 xl:p-16">
           <Logo size="lg" />
           <div className="max-w-md">
@@ -15,7 +15,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               Un catálogo cerrado.
               <br />
               Una sola llave:
-              <span className="text-aurum"> tu cuenta</span>.
+              <span className="text-lip"> tu cuenta</span>.
             </p>
             <p className="mt-6 text-[15px] leading-relaxed text-ink-muted">
               Cada reproducción se autoriza en el servidor y se sirve mediante enlaces firmados
@@ -23,7 +23,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             </p>
           </div>
           <p className="text-xs text-ink-faint">
-            Plataforma exclusiva para mayores de 18 años · © {new Date().getFullYear()} Noctra
+            Plataforma exclusiva para mayores de 18 años · © {new Date().getFullYear()} Madrastras
           </p>
         </div>
       </aside>

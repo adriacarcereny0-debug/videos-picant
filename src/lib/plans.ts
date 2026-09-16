@@ -9,7 +9,7 @@ export interface PlanDefinition {
   priceLabel: string;
   tagline: string;
   features: string[];
-  accent: "silver" | "aurum";
+  accent: "silver" | "lip";
   highlighted: boolean;
 }
 
@@ -42,7 +42,7 @@ export const PLANS: Record<PlanKey, PlanDefinition> = {
       "Reproductor de vídeo privado con enlaces firmados",
       "Cancelación en cualquier momento",
     ],
-    accent: "aurum",
+    accent: "lip",
     highlighted: true,
   },
 };

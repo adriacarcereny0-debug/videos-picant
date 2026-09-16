@@ -8,7 +8,7 @@ import { listPublishedVideos } from "@/lib/videos";
 
 export const metadata: Metadata = {
   title: "Catálogo",
-  description: "Explora el catálogo privado de Noctra por nivel de suscripción.",
+  description: "Explora el catálogo privado de Madrastras por nivel de suscripción.",
   robots: { index: false, follow: false },
 };
 
@@ -67,14 +67,14 @@ export default async function VideosPage({
             defaultValue={search ?? ""}
             placeholder="Buscar en el catálogo"
             aria-label="Buscar vídeos"
-            className="w-full rounded-full border border-line bg-[#0d0d11] py-3 pl-10 pr-4 text-sm text-ink placeholder:text-ink-faint focus:border-aurum/50 focus:outline-none focus:ring-2 focus:ring-aurum/20"
+            className="w-full rounded-[3px] border border-line bg-noir py-3 pl-10 pr-4 text-sm text-ink placeholder:text-ink-faint transition-colors duration-300 focus:border-lip focus:outline-none"
           />
           {filter && <input type="hidden" name="filter" value={filter} />}
         </form>
       </header>
 
       {/* Filtros */}
-      <nav className="mt-8 flex gap-2 overflow-x-auto pb-1" aria-label="Filtros de catálogo">
+      <nav className="mt-10 flex gap-7 overflow-x-auto border-b border-line" aria-label="Filtros de catálogo">
         {FILTERS.map((item) => {
           const active = filter === item.key;
           const href = item.key
@@ -84,10 +84,8 @@ export default async function VideosPage({
             <Link
               key={item.label}
               href={href}
-              className={`focus-ring shrink-0 rounded-full border px-4 py-2 text-[13px] font-semibold transition-all duration-300 ${
-                active
-                  ? "border-aurum/50 bg-aurum/12 text-aurum-soft"
-                  : "border-line text-ink-muted hover:border-line hover:bg-white/5 hover:text-ink"
+              className={`focus-ring shrink-0 border-b-2 px-1 pb-2 text-[12px] font-semibold uppercase tracking-[0.13em] transition-colors duration-300 ${
+                active ? "border-lip text-ink" : "border-transparent text-ink-faint hover:text-ink"
               }`}
             >
               {item.label}
@@ -97,10 +95,10 @@ export default async function VideosPage({
       </nav>
 
       {plan !== "PREMIUM" && locked > 0 && (
-        <div className="surface mt-8 flex flex-col gap-4 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-start gap-3">
-            <LevelBadge level="PREMIUM" className="mt-0.5" />
-            <p className="text-sm leading-relaxed text-ink-muted">
+        <div className="mt-8 flex flex-col gap-4 border-l-0 bg-surface px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <LevelBadge level="PREMIUM" />
+            <p className="text-[14px] text-ink-muted">
               <strong className="font-semibold text-ink">{locked}</strong>{" "}
               {locked === 1 ? "vídeo bloqueado" : "vídeos bloqueados"} con tu plan actual.
             </p>
@@ -112,7 +110,7 @@ export default async function VideosPage({
       )}
 
       {videos.length > 0 ? (
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="mt-12 grid gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {videos.map((video, index) => (
             <VideoCard key={video.id} video={video} priority={index < 4} />
           ))}

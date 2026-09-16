@@ -65,7 +65,7 @@ export default async function AdminSubscriptionsPage({
       <section className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Activas" value={active} accent="positive" />
         <StatCard label="Canceladas" value={canceled} />
-        <StatCard label="Con incidencia de pago" value={failed} accent="aurum" />
+        <StatCard label="Con incidencia de pago" value={failed} accent="lip" />
       </section>
 
       <nav className="flex gap-2 overflow-x-auto pb-1">
@@ -75,7 +75,7 @@ export default async function AdminSubscriptionsPage({
             href={item.key ? `/admin/subscriptions?filter=${item.key}` : "/admin/subscriptions"}
             className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[12.5px] font-semibold transition-all ${
               filter === item.key
-                ? "border-aurum/50 bg-aurum/12 text-aurum-soft"
+                ? "border-lip/50 bg-lip/12 text-lip-soft"
                 : "border-line text-ink-muted hover:text-ink"
             }`}
           >
